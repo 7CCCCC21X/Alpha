@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>空投实时查询</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f9f9f9;
+      color: #333;
+      max-width: 900px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .control {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    button {
+      padding: 8px 16px;
+      font-size: 15px;
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+    select {
+      padding: 6px 10px;
+      font-size: 15px;
+      margin-left: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    .subtext {
+      font-size: 13px;
+      color: #777;
+      margin-top: 4px;
+    }
+    #lastUpdate, #author {
+      text-align: center;
+      margin-top: 16px;
+      color: #777;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎁 空投实时数据展示</h2>
+
+  <div class="control">
+    <button id="refreshBtn" onclick="refreshData()">🔄 刷新数据</button>
+    <select id="tokenSelect" onchange="refreshData()">
+      <option value="XTER">XTER</option>
+      <!-- 可继续扩展更多代币 -->
+    </select>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>代币名称</th>
+        <th>当前价格 (USDT)</th>
+        <th>总空投数量</th>
+        <th>未领取数量</th>
+        <th>已领取数量</th>
+        <th>已领取用户</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td id="tokenName">-</td>
+        <td><div id="priceUsd">-</div></td>
+        <td>
+          <div id="totalSupply">-</div>
+          <div class="subtext" id="totalValue">( - USD )</div>
+        </td>
+        <td>
+          <div id="unclaimed">-</div>
+          <div class="subtext" id="unclaimedValue">( - USD )</div>
+        </td>
+        <td>
+          <div id="claimedAmount">-</div>
+          <div class="subtext" id="claimedValue">( - USD )</div>
+        </td>
+        <td id="claimedUsers">-</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div id="lastUpdate">📅 上次更新于 --:--:--</div>
+  <div id="author">👤 作者：<a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
+
+  <script>
+    const TOKENS = {
+      XTER: {
+        name: "XTER",
+        contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5",
+        totalSupply: 9967366,
+        perUserAmount: 294,
+        treasury: "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db"
+      }
+    };
+
+    let currentPrice = 0;
+
+    function formatInt(n) {
+      return Math.floor(Number(n)).toLocaleString();
+    }
+
+    function formatPrice(n) {
+      return Number(n).toFixed(4) + " USD";
+    }
+
+    function formatValue(n) {
+      return Math.floor(Number(n)).toLocaleString() + " USD";
+    }
+
+    function updateTimestamp() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, '0');
+      const m = String(now.getMinutes()).padStart(2, '0');
+      const s = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById("lastUpdate").innerText = `📅 上次更新于 ${h}:${m}:${s}`;
+    }
+
+    async function fetchPrice(contract) {
+      try {
+        const res = await fetch(`https://api.dexscreener.com/latest/dex/search/?q=${contract}`);
+        const data = await res.json();
+        const price = data.pairs[0]?.priceUsd;
+        if (price && parseFloat(price) > 0) {
+          currentPrice = parseFloat(price);
+          document.getElementById("priceUsd").innerText = formatPrice(currentPrice);
+        } else {
+          currentPrice = 0;
+          document.getElementById("priceUsd").innerText = "未找到价格数据";
+        }
+      } catch (e) {
+        currentPrice = 0;
+        document.getElementById("priceUsd").innerText = "获取失败";
+        console.error("价格查询失败", e);
+      }
+    }
+
+    async function queryAirdrop(token) {
+      const methodId = "0x70a08231";
+      const addrPadded = token.treasury.toLowerCase().replace("0x", "").padStart(64, '0');
+      const callData = methodId + addrPadded;
+
+      const payload = {
+        jsonrpc: "2.0",
+        id: Date.now(),
+        method: "eth_call",
+        params: [{ to: token.contract, data: callData }, "latest"]
+      };
+
+      try {
+        const res = await fetch("https://bsc-dataseed.binance.org/", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+
+        const json = await res.json();
+        const raw = json.result;
+        const value = parseInt(raw, 16);
+        const unclaimed = value / 1e18;
+        const claimedAmount = token.totalSupply - unclaimed;
+        const claimedUsers = Math.floor(claimedAmount / token.perUserAmount);
+
+        document.getElementById("tokenName").innerText = token.name;
+        document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
+        document.getElementById("unclaimed").innerText = formatInt(unclaimed);
+        document.getElementById("claimedAmount").innerText = formatInt(claimedAmount);
+        document.getElementById("claimedUsers").innerText = formatInt(claimedUsers);
+
+        document.getElementById("totalValue").innerText = `( ${formatValue(token.totalSupply * currentPrice)} )`;
+        document.getElementById("unclaimedValue").innerText = `( ${formatValue(unclaimed * currentPrice)} )`;
+        document.getElementById("claimedValue").innerText = `( ${formatValue(claimedAmount * currentPrice)} )`;
+
+        updateTimestamp();
+      } catch (err) {
+        console.error("空投数据查询失败", err);
+      }
+    }
+
+    async function refreshData() {
+      const btn = document.getElementById("refreshBtn");
+      btn.disabled = true;
+      btn.innerText = "⏳ 加载中...";
+
+      const selected = document.getElementById("tokenSelect").value;
+      const token = TOKENS[selected];
+
+      await fetchPrice(token.contract);
+      await queryAirdrop(token);
+
+      btn.disabled = false;
+      btn.innerText = "🔄 刷新数据";
+    }
+
+    window.onload = () => {
+      refreshData();
+    };
+  </script>
+</body>
+</html>
