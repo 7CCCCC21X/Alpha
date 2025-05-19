@@ -66,6 +66,24 @@
       font-size: 14px;
       opacity: 0.8;
     }
+    #progressBlock {
+      margin-top: 20px;
+      text-align: center;
+    }
+    #progressBarContainer {
+      width: 80%;
+      margin: 0 auto;
+      background: #eee;
+      border-radius: 6px;
+      overflow: hidden;
+      height: 16px;
+    }
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #0078d4, #00c6ff);
+      transition: width 0.5s;
+    }
   </style>
 </head>
 <body>
@@ -110,6 +128,14 @@
       </tr>
     </tbody>
   </table>
+
+  <!-- ✅ 新增进度条 -->
+  <div id="progressBlock">
+    <p>📈 已领取进度：<span id="claimedPercent">-</span>%</p>
+    <div id="progressBarContainer">
+      <div id="progressBar"></div>
+    </div>
+  </div>
 
   <div id="lastUpdate">📅 上次更新于 --:--:--</div>
   <div id="author">👤 作者：<a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
@@ -191,6 +217,7 @@
         const unclaimed = value / 1e18;
         const claimedAmount = token.totalSupply - unclaimed;
         const claimedUsers = Math.floor(claimedAmount / token.perUserAmount);
+        const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
 
         document.getElementById("tokenName").innerText = token.name;
         document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
@@ -201,6 +228,9 @@
         document.getElementById("totalValue").innerText = `( ${formatValue(token.totalSupply * currentPrice)} )`;
         document.getElementById("unclaimedValue").innerText = `( ${formatValue(unclaimed * currentPrice)} )`;
         document.getElementById("claimedValue").innerText = `( ${formatValue(claimedAmount * currentPrice)} )`;
+
+        document.getElementById("claimedPercent").innerText = claimedPercent;
+        document.getElementById("progressBar").style.width = `${claimedPercent}%`;
 
         updateTimestamp();
       } catch (err) {
