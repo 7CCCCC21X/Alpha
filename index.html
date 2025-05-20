@@ -50,6 +50,13 @@
       background: linear-gradient(to right, #0078d4, #00c6ff);
       transition: width 0.5s;
     }
+    #merlDeadline {
+      text-align: center;
+      margin-top: 20px;
+      color: #e55353;
+      font-size: 15px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -96,6 +103,11 @@
     <p>对应价值：<span id="surplusValue">-</span></p>
   </div>
 
+  <div id="merlDeadline">
+    ⏰ MERL 领取截止时间：2025 年 5 月 21 日 17:00（东八区）<br>
+    ⏳ 剩余时间：<span id="countdown">加载中...</span>
+  </div>
+
   <div id="lastUpdate">📅 上次更新于 --:--:--</div>
   <div id="author">👤 作者：<a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
 
@@ -119,6 +131,7 @@
     };
 
     let currentPrice = 0;
+    let countdownTimer = null;
 
     function formatInt(n) {
       return Math.floor(Number(n)).toLocaleString();
@@ -193,6 +206,29 @@
       updateTimestamp();
     }
 
+    function startCountdown() {
+      const endTime = new Date("2025-05-21T17:00:00+08:00").getTime();
+      if (countdownTimer) clearInterval(countdownTimer);
+
+      countdownTimer = setInterval(() => {
+        const now = new Date().getTime();
+        const diff = endTime - now;
+
+        if (diff <= 0) {
+          document.getElementById("countdown").innerText = "已结束";
+          clearInterval(countdownTimer);
+          return;
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerText =
+          `${hours}小时 ${minutes}分 ${seconds}秒`;
+      }, 1000);
+    }
+
     async function refreshData() {
       const btn = document.getElementById("refreshBtn");
       btn.disabled = true;
@@ -203,6 +239,15 @@
 
       await fetchPrice(token.contract);
       await queryClaimedData(token);
+
+      const deadlineNotice = document.getElementById("merlDeadline");
+      if (selected === "MERL") {
+        deadlineNotice.style.display = "block";
+        startCountdown();
+      } else {
+        deadlineNotice.style.display = "none";
+        if (countdownTimer) clearInterval(countdownTimer);
+      }
 
       btn.disabled = false;
       btn.innerText = "🔄 刷新数据";
