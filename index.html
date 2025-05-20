@@ -57,6 +57,26 @@
       font-size: 15px;
       display: none;
     }
+    .discount-note {
+      font-size: 13px;
+      color: #888;
+      margin-top: 5px;
+    }
+    .link-buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .link-buttons a {
+      display: inline-block;
+      margin: 6px;
+      padding: 8px 16px;
+      border-radius: 6px;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .debank-link { background: #00b894; }
+    .bscscan-link { background: #6c5ce7; }
   </style>
 </head>
 <body>
@@ -68,6 +88,12 @@
       <option value="MERL" selected>MERL</option>
       <option value="XTER">XTER</option>
     </select>
+  </div>
+
+  <!-- ✅ 新增按钮入口 -->
+  <div class="link-buttons">
+    <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank" class="debank-link">📦 币安Alpha 分发空投地址传送门</a>
+    <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank" class="bscscan-link">📜 币安 Web3 IDO 部署合约地址传送门</a>
   </div>
 
   <table>
@@ -101,6 +127,7 @@
   <div id="surplusBlock" style="text-align:center; margin-top:20px;">
     <p>剩余可分代币：<span id="surplusToken">-</span> 枚</p>
     <p>对应价值：<span id="surplusValue">-</span></p>
+    <p class="discount-note">* 上述数据已默认按 85% 显示，保守估算，仅供参考</p>
   </div>
 
   <div id="merlDeadline">
@@ -185,7 +212,10 @@
       const unclaimed = token.totalSupply - claimedAmount;
       const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
       const surplusPerUser = claimedUsers > 0 ? (unclaimed / claimedUsers) : 0;
-      const surplusValue = surplusPerUser * currentPrice;
+
+      const rawValue = surplusPerUser * currentPrice;
+      const adjustedToken = surplusPerUser * 0.85;
+      const adjustedValue = rawValue * 0.85;
 
       document.getElementById("tokenName").innerText = token.name;
       document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
@@ -200,8 +230,8 @@
       document.getElementById("claimedPercent").innerText = claimedPercent;
       document.getElementById("progressBar").style.width = `${claimedPercent}%`;
 
-      document.getElementById("surplusToken").innerText = surplusPerUser.toFixed(3);
-      document.getElementById("surplusValue").innerText = formatValue(surplusValue);
+      document.getElementById("surplusToken").innerText = adjustedToken.toFixed(3);
+      document.getElementById("surplusValue").innerText = formatValue(adjustedValue);
 
       updateTimestamp();
     }
