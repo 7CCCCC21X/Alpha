@@ -12,75 +12,41 @@
       margin: 40px auto;
       padding: 20px;
     }
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    .control {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    h2 { text-align: center; margin-bottom: 20px; }
+    .control { text-align: center; margin-bottom: 20px; }
     button {
-      padding: 8px 16px;
-      font-size: 15px;
-      background-color: #0078d4;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
+      padding: 8px 16px; font-size: 15px;
+      background-color: #0078d4; color: white;
+      border: none; border-radius: 6px;
+      cursor: pointer; transition: background-color 0.2s;
     }
-    button:hover {
-      background-color: #005fa3;
-    }
+    button:hover { background-color: #005fa3; }
     select {
-      padding: 6px 10px;
-      font-size: 15px;
+      padding: 6px 10px; font-size: 15px;
       margin-left: 10px;
     }
     table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      width: 100%; border-collapse: collapse;
+      background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
     th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: center;
-      vertical-align: middle;
+      border: 1px solid #ddd; padding: 12px;
+      text-align: center; vertical-align: middle;
     }
-    th {
-      background-color: #f2f2f2;
-      font-weight: bold;
-    }
-    .subtext {
-      font-size: 13px;
-      color: #777;
-      margin-top: 4px;
-    }
+    th { background-color: #f2f2f2; font-weight: bold; }
+    .subtext { font-size: 13px; color: #777; margin-top: 4px; }
     #lastUpdate, #author {
-      text-align: center;
-      margin-top: 16px;
-      color: #777;
-      font-size: 14px;
-      opacity: 0.8;
+      text-align: center; margin-top: 16px;
+      color: #777; font-size: 14px; opacity: 0.8;
     }
-    #progressBlock {
-      margin-top: 20px;
-      text-align: center;
-    }
+    #progressBlock { margin-top: 20px; text-align: center; }
     #progressBarContainer {
-      width: 80%;
-      margin: 0 auto;
-      background: #eee;
-      border-radius: 6px;
-      overflow: hidden;
-      height: 16px;
+      width: 80%; margin: 0 auto;
+      background: #eee; border-radius: 6px;
+      overflow: hidden; height: 16px;
     }
     #progressBar {
-      height: 100%;
-      width: 0%;
+      height: 100%; width: 0%;
       background: linear-gradient(to right, #0078d4, #00c6ff);
       transition: width 0.5s;
     }
@@ -92,6 +58,7 @@
   <div class="control">
     <button id="refreshBtn" onclick="refreshData()">🔄 刷新数据</button>
     <select id="tokenSelect" onchange="refreshData()">
+      <option value="MERL" selected>MERL</option>
       <option value="XTER">XTER</option>
     </select>
   </div>
@@ -111,18 +78,9 @@
       <tr>
         <td id="tokenName">-</td>
         <td><div id="priceUsd">-</div></td>
-        <td>
-          <div id="totalSupply">-</div>
-          <div class="subtext" id="totalValue">( - USD )</div>
-        </td>
-        <td>
-          <div id="unclaimed">-</div>
-          <div class="subtext" id="unclaimedValue">( - USD )</div>
-        </td>
-        <td>
-          <div id="claimedAmount">-</div>
-          <div class="subtext" id="claimedValue">( - USD )</div>
-        </td>
+        <td><div id="totalSupply">-</div><div class="subtext" id="totalValue">( - USD )</div></td>
+        <td><div id="unclaimed">-</div><div class="subtext" id="unclaimedValue">( - USD )</div></td>
+        <td><div id="claimedAmount">-</div><div class="subtext" id="claimedValue">( - USD )</div></td>
         <td id="claimedUsers">-</td>
       </tr>
     </tbody>
@@ -130,12 +88,9 @@
 
   <div id="progressBlock">
     <p>📈 已领取进度：<span id="claimedPercent">-</span>%</p>
-    <div id="progressBarContainer">
-      <div id="progressBar"></div>
-    </div>
+    <div id="progressBarContainer"><div id="progressBar"></div></div>
   </div>
 
-  <!-- ✅ 新增：剩余可分代币展示 -->
   <div id="surplusBlock" style="text-align:center; margin-top:20px;">
     <p>剩余可分代币：<span id="surplusToken">-</span> 枚</p>
     <p>对应价值：<span id="surplusValue">-</span></p>
@@ -146,11 +101,20 @@
 
   <script>
     const TOKENS = {
+      MERL: {
+        name: "MERL",
+        contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9",
+        totalSupply: 31364000,
+        perUserAmount: 1000,
+        fetchUserCountFromAPI: true
+      },
       XTER: {
         name: "XTER",
         contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5",
         totalSupply: 9967366,
-        perUserAmount: 294
+        perUserAmount: 294,
+        claimedUsers: 18942,
+        fetchUserCountFromAPI: false
       }
     };
 
@@ -181,52 +145,52 @@
         const res = await fetch(`https://api.dexscreener.com/latest/dex/search/?q=${contract}`);
         const data = await res.json();
         const price = data.pairs[0]?.priceUsd;
-        if (price && parseFloat(price) > 0) {
-          currentPrice = parseFloat(price);
-          document.getElementById("priceUsd").innerText = formatPrice(currentPrice);
-        } else {
-          currentPrice = 0;
-          document.getElementById("priceUsd").innerText = "未找到价格数据";
-        }
-      } catch (e) {
+        currentPrice = price ? parseFloat(price) : 0;
+        document.getElementById("priceUsd").innerText = currentPrice > 0 ? formatPrice(currentPrice) : "未找到价格";
+      } catch {
         currentPrice = 0;
         document.getElementById("priceUsd").innerText = "获取失败";
-        console.error("价格查询失败", e);
       }
     }
 
     async function queryClaimedData(token) {
-      try {
-        const res = await fetch("https://lingquss.vercel.app/api/proxy");
-        const json = await res.json();
-        const claimedUsers = Number(json?.sold_count) || 0;
-        const claimedAmount = claimedUsers * token.perUserAmount;
-        const unclaimed = token.totalSupply - claimedAmount;
-        const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
-        const surplusPerUser = claimedUsers > 0 ? (unclaimed / claimedUsers) : 0;
-        const surplusValue = surplusPerUser * currentPrice;
+      let claimedUsers = 0;
 
-        document.getElementById("tokenName").innerText = token.name;
-        document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
-        document.getElementById("claimedUsers").innerText = formatInt(claimedUsers);
-        document.getElementById("claimedAmount").innerText = formatInt(claimedAmount);
-        document.getElementById("unclaimed").innerText = formatInt(unclaimed);
-
-        document.getElementById("totalValue").innerText = `( ${formatValue(token.totalSupply * currentPrice)} )`;
-        document.getElementById("unclaimedValue").innerText = `( ${formatValue(unclaimed * currentPrice)} )`;
-        document.getElementById("claimedValue").innerText = `( ${formatValue(claimedAmount * currentPrice)} )`;
-
-        document.getElementById("claimedPercent").innerText = claimedPercent;
-        document.getElementById("progressBar").style.width = `${claimedPercent}%`;
-
-        // 新增：剩余可分代币逻辑
-        document.getElementById("surplusToken").innerText = surplusPerUser.toFixed(3);
-        document.getElementById("surplusValue").innerText = formatValue(surplusValue);
-
-        updateTimestamp();
-      } catch (err) {
-        console.error("空投数据查询失败", err);
+      if (token.fetchUserCountFromAPI) {
+        try {
+          const res = await fetch("https://lingquss.vercel.app/api/proxy");
+          const json = await res.json();
+          claimedUsers = Number(json?.sold_count) || 0;
+        } catch {
+          claimedUsers = 0;
+        }
+      } else {
+        claimedUsers = token.claimedUsers;
       }
+
+      const claimedAmount = claimedUsers * token.perUserAmount;
+      const unclaimed = token.totalSupply - claimedAmount;
+      const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
+      const surplusPerUser = claimedUsers > 0 ? (unclaimed / claimedUsers) : 0;
+      const surplusValue = surplusPerUser * currentPrice;
+
+      document.getElementById("tokenName").innerText = token.name;
+      document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
+      document.getElementById("claimedUsers").innerText = formatInt(claimedUsers);
+      document.getElementById("claimedAmount").innerText = formatInt(claimedAmount);
+      document.getElementById("unclaimed").innerText = formatInt(unclaimed);
+
+      document.getElementById("totalValue").innerText = `( ${formatValue(token.totalSupply * currentPrice)} )`;
+      document.getElementById("unclaimedValue").innerText = `( ${formatValue(unclaimed * currentPrice)} )`;
+      document.getElementById("claimedValue").innerText = `( ${formatValue(claimedAmount * currentPrice)} )`;
+
+      document.getElementById("claimedPercent").innerText = claimedPercent;
+      document.getElementById("progressBar").style.width = `${claimedPercent}%`;
+
+      document.getElementById("surplusToken").innerText = surplusPerUser.toFixed(3);
+      document.getElementById("surplusValue").innerText = formatValue(surplusValue);
+
+      updateTimestamp();
     }
 
     async function refreshData() {
