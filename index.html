@@ -135,6 +135,12 @@
     </div>
   </div>
 
+  <!-- ✅ 新增：剩余可分代币展示 -->
+  <div id="surplusBlock" style="text-align:center; margin-top:20px;">
+    <p>剩余可分代币：<span id="surplusToken">-</span> 枚</p>
+    <p>对应价值：<span id="surplusValue">-</span></p>
+  </div>
+
   <div id="lastUpdate">📅 上次更新于 --:--:--</div>
   <div id="author">👤 作者：<a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
 
@@ -197,6 +203,8 @@
         const claimedAmount = claimedUsers * token.perUserAmount;
         const unclaimed = token.totalSupply - claimedAmount;
         const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
+        const surplusPerUser = claimedUsers > 0 ? (unclaimed / claimedUsers) : 0;
+        const surplusValue = surplusPerUser * currentPrice;
 
         document.getElementById("tokenName").innerText = token.name;
         document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
@@ -210,6 +218,10 @@
 
         document.getElementById("claimedPercent").innerText = claimedPercent;
         document.getElementById("progressBar").style.width = `${claimedPercent}%`;
+
+        // 新增：剩余可分代币逻辑
+        document.getElementById("surplusToken").innerText = surplusPerUser.toFixed(3);
+        document.getElementById("surplusValue").innerText = formatValue(surplusValue);
 
         updateTimestamp();
       } catch (err) {
