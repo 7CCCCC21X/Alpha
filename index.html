@@ -93,7 +93,6 @@
     <button id="refreshBtn" onclick="refreshData()">🔄 刷新数据</button>
     <select id="tokenSelect" onchange="refreshData()">
       <option value="XTER">XTER</option>
-      <!-- 可继续扩展更多代币 -->
     </select>
   </div>
 
@@ -129,7 +128,6 @@
     </tbody>
   </table>
 
-  <!-- ✅ 新增进度条 -->
   <div id="progressBlock">
     <p>📈 已领取进度：<span id="claimedPercent">-</span>%</p>
     <div id="progressBarContainer">
@@ -146,8 +144,7 @@
         name: "XTER",
         contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5",
         totalSupply: 9967366,
-        perUserAmount: 294,
-        treasury: "0x73d8bd54f7cf5fab43fe4ef40a62d390644946db"
+        perUserAmount: 294
       }
     };
 
@@ -192,38 +189,20 @@
       }
     }
 
-    async function queryAirdrop(token) {
-      const methodId = "0x70a08231";
-      const addrPadded = token.treasury.toLowerCase().replace("0x", "").padStart(64, '0');
-      const callData = methodId + addrPadded;
-
-      const payload = {
-        jsonrpc: "2.0",
-        id: Date.now(),
-        method: "eth_call",
-        params: [{ to: token.contract, data: callData }, "latest"]
-      };
-
+    async function queryClaimedData(token) {
       try {
-        const res = await fetch("https://bsc-dataseed.binance.org/", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        });
-
+        const res = await fetch("https://lingquss.vercel.app/api/proxy");
         const json = await res.json();
-        const raw = json.result;
-        const value = parseInt(raw, 16);
-        const unclaimed = value / 1e18;
-        const claimedAmount = token.totalSupply - unclaimed;
-        const claimedUsers = Math.floor(claimedAmount / token.perUserAmount);
+        const claimedUsers = Number(json?.sold_count) || 0;
+        const claimedAmount = claimedUsers * token.perUserAmount;
+        const unclaimed = token.totalSupply - claimedAmount;
         const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
 
         document.getElementById("tokenName").innerText = token.name;
         document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
-        document.getElementById("unclaimed").innerText = formatInt(unclaimed);
-        document.getElementById("claimedAmount").innerText = formatInt(claimedAmount);
         document.getElementById("claimedUsers").innerText = formatInt(claimedUsers);
+        document.getElementById("claimedAmount").innerText = formatInt(claimedAmount);
+        document.getElementById("unclaimed").innerText = formatInt(unclaimed);
 
         document.getElementById("totalValue").innerText = `( ${formatValue(token.totalSupply * currentPrice)} )`;
         document.getElementById("unclaimedValue").innerText = `( ${formatValue(unclaimed * currentPrice)} )`;
@@ -247,7 +226,7 @@
       const token = TOKENS[selected];
 
       await fetchPrice(token.contract);
-      await queryAirdrop(token);
+      await queryClaimedData(token);
 
       btn.disabled = false;
       btn.innerText = "🔄 刷新数据";
