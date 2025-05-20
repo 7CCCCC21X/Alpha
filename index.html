@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <title>币安Alpha空投实时查询</title>
+  <link rel="icon" href="https://www.binance.com/favicon.ico" />
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
       background: #f9f9f9;
       color: #333;
       max-width: 900px;
@@ -13,70 +14,131 @@
       padding: 20px;
     }
     h2 { text-align: center; margin-bottom: 20px; }
-    .control { text-align: center; margin-bottom: 20px; }
-    button {
-      padding: 8px 16px; font-size: 15px;
-      background-color: #0078d4; color: white;
-      border: none; border-radius: 6px;
-      cursor: pointer; transition: background-color 0.2s;
-    }
-    button:hover { background-color: #005fa3; }
-    select {
-      padding: 6px 10px; font-size: 15px;
-      margin-left: 10px;
-    }
-    table {
-      width: 100%; border-collapse: collapse;
-      background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    }
-    th, td {
-      border: 1px solid #ddd; padding: 12px;
-      text-align: center; vertical-align: middle;
-    }
-    th { background-color: #f2f2f2; font-weight: bold; }
-    .subtext { font-size: 13px; color: #777; margin-top: 4px; }
-    #lastUpdate, #author {
-      text-align: center; margin-top: 16px;
-      color: #777; font-size: 14px; opacity: 0.8;
-    }
-    #progressBlock { margin-top: 20px; text-align: center; }
-    #progressBarContainer {
-      width: 80%; margin: 0 auto;
-      background: #eee; border-radius: 6px;
-      overflow: hidden; height: 16px;
-    }
-    #progressBar {
-      height: 100%; width: 0%;
-      background: linear-gradient(to right, #0078d4, #00c6ff);
-      transition: width 0.5s;
-    }
-    #merlDeadline {
-      text-align: center;
-      margin-top: 20px;
-      color: #e55353;
-      font-size: 15px;
-      display: none;
-    }
-    .discount-note {
-      font-size: 13px;
-      color: #888;
-      margin-top: 5px;
-    }
-    .link-buttons {
+    h3 { text-align: center; color: #444; margin-top: 30px; }
+
+    .control, .link-buttons {
       text-align: center;
       margin-bottom: 20px;
     }
+
+    button {
+      padding: 8px 16px;
+      font-size: 15px;
+      background-color: #0078d4;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover { background-color: #005fa3; }
+
+    select {
+      padding: 6px 10px;
+      font-size: 15px;
+      margin-left: 10px;
+    }
+
     .link-buttons a {
       display: inline-block;
       margin: 6px;
       padding: 8px 16px;
       border-radius: 6px;
-      color: white;
+      border: 1px solid #0078d4;
+      background: white;
+      color: #0078d4;
       text-decoration: none;
       font-size: 14px;
+      transition: all 0.2s ease;
     }
-    .debank-link { background: #00b894; }
-    .bscscan-link { background: #6c5ce7; }
+    .link-buttons a:hover {
+      background-color: #0078d4;
+      color: white;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+    tr:hover { background-color: #f9fcff; }
+
+    .subtext {
+      font-size: 13px;
+      color: #777;
+      margin-top: 4px;
+    }
+
+    #lastUpdate, #author {
+      text-align: center;
+      margin-top: 16px;
+      color: #777;
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    #progressBlock, #surplusBlock, #merlDeadline {
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    #progressBarContainer {
+      width: 80%;
+      margin: 0 auto;
+      background: #eee;
+      border-radius: 6px;
+      overflow: hidden;
+      height: 16px;
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(to right, #0078d4, #00c6ff);
+      transition: width 0.5s;
+    }
+
+    .discount-note {
+      font-size: 13px;
+      color: #888;
+      margin-top: 5px;
+    }
+
+    #merlDeadline {
+      color: #e55353;
+      font-size: 15px;
+      display: none;
+    }
+
+    #countdownBar {
+      width: 80%;
+      height: 8px;
+      background: #ffe4e4;
+      border-radius: 6px;
+      overflow: hidden;
+      margin: 6px auto 0;
+      display: none;
+    }
+
+    #countdownBarInner {
+      height: 100%;
+      width: 100%;
+      background-color: #e55353;
+      transition: width 1s;
+    }
   </style>
 </head>
 <body>
@@ -90,12 +152,12 @@
     </select>
   </div>
 
-  <!-- ✅ 新增按钮入口 -->
   <div class="link-buttons">
-    <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank" class="debank-link">📦 币安Alpha 分发空投地址传送门</a>
-    <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank" class="bscscan-link">📜 币安 Web3 IDO 部署合约地址传送门</a>
+    <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 币安Alpha 分发空投地址传送门</a>
+    <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank">📜 币安 Web3 IDO 部署合约地址传送门</a>
   </div>
 
+  <h3>📊 空投发放进度</h3>
   <table>
     <thead>
       <tr>
@@ -124,17 +186,19 @@
     <div id="progressBarContainer"><div id="progressBar"></div></div>
   </div>
 
-  <div id="surplusBlock" style="text-align:center; margin-top:20px;">
+  <h3>📌 剩余领取信息</h3>
+  <div id="surplusBlock">
     <p>剩余可分代币：<span id="surplusToken">-</span> 枚</p>
     <p>对应价值：<span id="surplusValue">-</span></p>
-    <p class="discount-note">* 保守估算，仅供参考</p>
+    <p class="discount-note">* 上述数据已默认按 85% 显示，保守估算，仅供参考</p>
   </div>
 
+  <h3>⏳ MERL 领取截止</h3>
   <div id="merlDeadline">
-    ⏰ MERL 领取截止时间：2025 年 5 月 21 日 17:00（东八区）<br>
-    ⏳ 剩余时间：<span id="countdown">加载中...</span>
+    MERL 领取截止时间：2025 年 5 月 21 日 17:00（东八区）<br>
+    剩余时间：<span id="countdown">加载中...</span>
   </div>
-
+  <div id="countdownBar"><div id="countdownBarInner"></div></div>
   <div id="lastUpdate">📅 上次更新于 --:--:--</div>
   <div id="author">👤 作者：<a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
 
@@ -238,14 +302,20 @@
 
     function startCountdown() {
       const endTime = new Date("2025-05-21T17:00:00+08:00").getTime();
+      const totalTime = endTime - new Date("2025-05-20T17:00:00+08:00").getTime(); // 24h
       if (countdownTimer) clearInterval(countdownTimer);
 
       countdownTimer = setInterval(() => {
         const now = new Date().getTime();
         const diff = endTime - now;
 
+        const bar = document.getElementById("countdownBar");
+        const barInner = document.getElementById("countdownBarInner");
+        bar.style.display = "block";
+
         if (diff <= 0) {
           document.getElementById("countdown").innerText = "已结束";
+          barInner.style.width = "0%";
           clearInterval(countdownTimer);
           return;
         }
@@ -253,9 +323,11 @@
         const hours = Math.floor(diff / (1000 * 60 * 60));
         const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
         document.getElementById("countdown").innerText =
           `${hours}小时 ${minutes}分 ${seconds}秒`;
+
+        const progress = ((totalTime - diff) / totalTime) * 100;
+        barInner.style.width = `${progress.toFixed(1)}%`;
       }, 1000);
     }
 
@@ -271,11 +343,14 @@
       await queryClaimedData(token);
 
       const deadlineNotice = document.getElementById("merlDeadline");
+      const countdownBar = document.getElementById("countdownBar");
       if (selected === "MERL") {
         deadlineNotice.style.display = "block";
+        countdownBar.style.display = "block";
         startCountdown();
       } else {
         deadlineNotice.style.display = "none";
+        countdownBar.style.display = "none";
         if (countdownTimer) clearInterval(countdownTimer);
       }
 
