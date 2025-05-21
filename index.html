@@ -203,23 +203,24 @@
   <div id="author">👤 作者：<a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
 
   <script>
-    const TOKENS = {
-      MERL: {
-        name: "MERL",
-        contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9",
-        totalSupply: 31364000,
-        perUserAmount: 1000,
-        fetchUserCountFromAPI: true
-      },
-      XTER: {
-        name: "XTER",
-        contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5",
-        totalSupply: 9967366,
-        perUserAmount: 294,
-        claimedUsers: 18942,
-        fetchUserCountFromAPI: false
-      }
-    };
+const TOKENS = {
+  MERL: {
+    name: "MERL",
+    contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9",
+    totalSupply: 31364000,
+    perUserAmount: 1000,
+    fetchUserCountFromAPI: false,
+    claimedUsers: 17612
+  },
+  XTER: {
+    name: "XTER",
+    contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5",
+    totalSupply: 9967366,
+    perUserAmount: 294,
+    claimedUsers: 18942,
+    fetchUserCountFromAPI: false
+  }
+};
 
     let currentPrice = 0;
     let countdownTimer = null;
