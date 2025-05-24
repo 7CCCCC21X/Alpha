@@ -12,9 +12,14 @@
       margin: 40px auto;
       padding: 20px;
     }
-    h2 { text-align: center; margin-bottom: 20px; }
-    h3 { text-align: center; color: #444; margin-top: 30px; }
-    .control, .link-buttons { text-align: center; margin-bottom: 20px; }
+    h2, h3 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .control, .link-buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
     button {
       padding: 8px 16px;
       font-size: 15px;
@@ -41,11 +46,19 @@
       color: #0078d4;
       text-decoration: none;
       font-size: 14px;
-      transition: all 0.2s ease;
     }
     .link-buttons a:hover {
       background-color: #0078d4;
       color: white;
+    }
+    #obtNote {
+      max-width: 850px;
+      background: #f5f5f5;
+      border-left: 4px solid #0078d4;
+      padding: 12px 16px;
+      margin: 0 auto 20px;
+      border-radius: 6px;
+      color: #333;
     }
     table {
       width: 100%;
@@ -53,13 +66,11 @@
       background: #fff;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05);
       border-radius: 8px;
-      overflow: hidden;
     }
     th, td {
       border: 1px solid #ddd;
       padding: 12px;
       text-align: center;
-      vertical-align: middle;
     }
     th {
       background-color: #f2f2f2;
@@ -69,14 +80,12 @@
     .subtext {
       font-size: 13px;
       color: #777;
-      margin-top: 4px;
     }
     #lastUpdate, #author {
       text-align: center;
       margin-top: 16px;
       color: #777;
       font-size: 14px;
-      opacity: 0.8;
     }
     #progressBlock, #surplusBlock, #merlDeadline {
       text-align: center;
@@ -99,7 +108,6 @@
     .discount-note {
       font-size: 13px;
       color: #888;
-      margin-top: 5px;
     }
     #merlDeadline {
       color: #e55353;
@@ -139,6 +147,12 @@
     <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 币安Alpha 分发空投地址传送门</a>
     <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank">📜 币安 Web3 IDO 部署合约地址传送门</a>
   </div>
+  <div id="obtNote">
+    ℹ️ <strong>说明：</strong>OBT 空投总数量从 79,560,000 增加至 <strong>179,560,000</strong>，因为币安后来又转了 1 亿 OBT 到空投地址。<br>
+    🔗 转账记录：
+    <a href="https://www.oklink.com/zh-hans/bsc/tx/0xa607641a1b90782f93906cede07396a8118b2fd1e854aa0f0d21f6d22c219d44" target="_blank">转账 1</a>、
+    <a href="https://www.oklink.com/zh-hans/bsc/tx/0x25cc1d97a80d260ea4a755674e734e9cde3cec2707d65aab1c7d6640386158e4" target="_blank">转账 2</a>
+  </div>
   <h3>📊 空投发放进度</h3>
   <table>
     <thead>
@@ -170,13 +184,14 @@
   <div id="surplusBlock">
     <p>剩余可分代币：<span id="surplusToken">-</span> 枚</p>
     <p>对应价值：<span id="surplusValue">-</span></p>
-    <p class="discount-note">* 上述数据已默认按 85% 显示，保守估算，仅供参考</p>
+    <p class="discount-note">* 显示为 85% 保守估算</p>
   </div>
   <h3>⏳ 空投领取截止</h3>
   <div id="merlDeadline"></div>
   <div id="countdownBar"><div id="countdownBarInner"></div></div>
   <div id="lastUpdate">📅 上次更新于 --:--:--</div>
   <div id="author">👤 作者：<a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
+
 <script>
 const TOKENS = {
   MERL: { name: "MERL", contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9", totalSupply: 31364000, perUserAmount: 1000, fetchUserCountFromAPI: false, claimedUsers: 17612 },
@@ -185,6 +200,7 @@ const TOKENS = {
   Soon: { name: "Soon", contract: "0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply: 14964300, perUserAmount: 180, fetchUserCountFromAPI: false, claimedUsers: 43566 },
   OBT: { name: "OBT", contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: true, claimedUsers: 0 }
 };
+
 let currentPrice = 0, countdownTimer = null;
 function formatInt(n) { return Math.floor(Number(n)).toLocaleString(); }
 function formatPrice(n) { return Number(n).toFixed(4) + " USD"; }
@@ -220,8 +236,7 @@ async function queryClaimedData(token) {
   const claimedAmount = claimedUsers * token.perUserAmount;
   const unclaimed = token.totalSupply - claimedAmount;
   const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
-  const surplusPerUser = claimedUsers > 0 ? (unclaimed / claimedUsers) : 0;
-  const adjustedToken = surplusPerUser * 0.85;
+  const adjustedToken = (unclaimed / claimedUsers) * 0.85;
   const adjustedValue = adjustedToken * currentPrice;
   document.getElementById("tokenName").innerText = token.name;
   document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
@@ -266,25 +281,22 @@ async function refreshData() {
   await queryClaimedData(token);
   const notice = document.getElementById("merlDeadline");
   const bar = document.getElementById("countdownBar");
-  if (selected === "MERL") {
-    notice.innerHTML = `MERL 领取截止时间：2025 年 5 月 21 日 17:00（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
-    startCountdown("2025-05-21T17:00:00+08:00", "2025-05-20T17:00:00+08:00");
-  } else if (selected === "TGT") {
-    notice.innerHTML = `TGT 领取截止时间：2025 年 5 月 22 日 18:00（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
-    startCountdown("2025-05-22T18:00:00+08:00", "2025-05-21T18:00:00+08:00");
-  } else if (selected === "Soon") {
-    notice.innerHTML = `Soon 领取截止时间：2025 年 5 月 24 日 16:00（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
-    startCountdown("2025-05-24T16:00:00+08:00", "2025-05-23T16:00:00+08:00");
-  } else if (selected === "OBT") {
-    notice.innerHTML = `OBT 领取截止时间：2025 年 5 月 25 日 16:00（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
-    startCountdown("2025-05-25T16:00:00+08:00", "2025-05-24T16:00:00+08:00");
+  if (["MERL", "TGT", "Soon", "OBT"].includes(selected)) {
+    const endTimes = {
+      MERL: "2025-05-21T17:00:00+08:00",
+      TGT: "2025-05-22T18:00:00+08:00",
+      Soon: "2025-05-24T16:00:00+08:00",
+      OBT: "2025-05-25T16:00:00+08:00"
+    };
+    notice.innerHTML = `${selected} 领取截止时间：${endTimes[selected].replace("T", " ").replace("+08:00", "")}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
+    notice.style.display = "block";
+    bar.style.display = "block";
+    startCountdown(endTimes[selected], new Date().toISOString());
   } else {
     notice.style.display = "none";
     bar.style.display = "none";
     if (countdownTimer) clearInterval(countdownTimer);
   }
-  notice.style.display = "block";
-  bar.style.display = "block";
   btn.disabled = false;
   btn.innerText = "🔄 刷新数据";
 }
