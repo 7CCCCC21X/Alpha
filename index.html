@@ -236,7 +236,7 @@ async function queryClaimedData(token) {
   const claimedAmount = claimedUsers * token.perUserAmount;
   const unclaimed = token.totalSupply - claimedAmount;
   const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
-  const adjustedToken = (unclaimed / claimedUsers) * 0.85;
+  const adjustedToken = (unclaimed / claimedUsers) * 0.7;
   const adjustedValue = adjustedToken * currentPrice;
   document.getElementById("tokenName").innerText = token.name;
   document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
