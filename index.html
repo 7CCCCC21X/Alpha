@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html lang="zh">
 <head>
   <meta charset="UTF-8" />
   <title>币安Alpha空投实时查询</title>
@@ -58,6 +60,7 @@
       margin: 0 auto 20px;
       border-radius: 6px;
       color: #333;
+      display: none;
     }
     table {
       width: 100%;
@@ -134,13 +137,14 @@
   <h2>币安 Alpha空投实时数据展示</h2>
   <div class="control">
     <button id="refreshBtn" onclick="refreshData()">🔄 刷新数据</button>
-    <select id="tokenSelect" onchange="refreshData()">
-      <option value="OBT" selected>OBT</option>
-      <option value="MERL">MERL</option>
-      <option value="XTER">XTER</option>
-      <option value="TGT">TGT</option>
-      <option value="Soon">Soon</option>
-    </select>
+<select id="tokenSelect" onchange="refreshData()">
+  <option value="OBT">OBT</option>
+  <option value="MERL">MERL</option>
+  <option value="XTER">XTER</option>
+  <option value="TGT">TGT</option>
+  <option value="Soon">Soon</option>
+  <option value="HUMA" selected>HUMA</option>
+</select>
   </div>
   <div class="link-buttons">
     <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 币安Alpha 分发空投地址传送门</a>
@@ -197,9 +201,9 @@ const TOKENS = {
   XTER: { name: "XTER", contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5", totalSupply: 9967366, perUserAmount: 294, fetchUserCountFromAPI: false, claimedUsers: 18942 },
   TGT: { name: "TGT", contract: "0x6c58e4a513d3a8062e57f41a1442e003af14ebb5", totalSupply: 9962500, perUserAmount: 500, fetchUserCountFromAPI: false, claimedUsers: 8321 },
   Soon: { name: "Soon", contract: "0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply: 14964300, perUserAmount: 180, fetchUserCountFromAPI: false, claimedUsers: 43566 },
-  OBT: { name: "OBT", contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 }
+  OBT: { name: "OBT", contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
+  HUMA: { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750, perUserAmount: 1250, fetchUserCountFromAPI: true }
 };
-
 let currentPrice = 0, countdownTimer = null;
 function formatInt(n) { return Math.floor(Number(n)).toLocaleString(); }
 function formatPrice(n) { return Number(n).toFixed(4) + " USD"; }
@@ -276,17 +280,19 @@ async function refreshData() {
   btn.innerText = "⏳ 加载中...";
   const selected = document.getElementById("tokenSelect").value;
   const token = TOKENS[selected];
+  document.getElementById("obtNote").style.display = selected === "OBT" ? "block" : "none";
   await fetchPrice(token.contract);
   await queryClaimedData(token);
   const notice = document.getElementById("merlDeadline");
   const bar = document.getElementById("countdownBar");
-  if (["MERL", "TGT", "Soon", "OBT"].includes(selected)) {
-    const endTimes = {
-      MERL: "2025-05-21T17:00:00+08:00",
-      TGT: "2025-05-22T18:00:00+08:00",
-      Soon: "2025-05-24T16:00:00+08:00",
-      OBT: "2025-05-25T16:00:00+08:00"
-    };
+  const endTimes = {
+    MERL: "2025-05-21T17:00:00+08:00",
+    TGT: "2025-05-22T18:00:00+08:00",
+    Soon: "2025-05-24T16:00:00+08:00",
+    OBT: "2025-05-25T16:00:00+08:00",
+    HUMA: "2025-05-27T19:00:00+08:00"
+  };
+  if (endTimes[selected]) {
     notice.innerHTML = `${selected} 领取截止时间：${endTimes[selected].replace("T", " ").replace("+08:00", "")}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
     notice.style.display = "block";
     bar.style.display = "block";
