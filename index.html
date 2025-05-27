@@ -137,22 +137,23 @@
   <h2>币安 Alpha空投实时数据展示</h2>
   <div class="control">
     <button id="refreshBtn" onclick="refreshData()">🔄 刷新数据</button>
-<select id="tokenSelect" onchange="refreshData()">
-  <option value="OBT">OBT</option>
-  <option value="MERL">MERL</option>
-  <option value="XTER">XTER</option>
-  <option value="TGT">TGT</option>
-  <option value="Soon">Soon</option>
-  <option value="HUMA" selected>HUMA</option>
-</select>
+    <select id="tokenSelect" onchange="refreshData()">
+      <option value="OBT">OBT</option>
+      <option value="MERL">MERL</option>
+      <option value="XTER">XTER</option>
+      <option value="TGT">TGT</option>
+      <option value="Soon">Soon</option>
+      <option value="HUMA">HUMA</option>
+      <option value="PFVS" selected>PFVS</option>
+    </select>
   </div>
   <div class="link-buttons">
     <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 币安Alpha 分发空投地址传送门</a>
     <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank">📜 币安 Web3 IDO 部署合约地址传送门</a>
   </div>
   <div id="obtNote">
-    ℹ️ <strong>说明：</strong>OBT 空投总数量从 79,560,000 增加至 <strong>179,560,000</strong>，因为币安后来又转了 1 亿 OBT 到空投地址。<br>
-    🔗 转账记录：
+    ℹ️ <strong>说明：</strong>OBT 空投总数量从 79,560,000 增加至 <strong>179,560,000</strong>，因为币安后来又转了 1 亿 OBT 到空投地址。
+    <br>🔗 转账记录：
     <a href="https://www.oklink.com/zh-hans/bsc/tx/0xa607641a1b90782f93906cede07396a8118b2fd1e854aa0f0d21f6d22c219d44" target="_blank">转账 1</a>、
     <a href="https://www.oklink.com/zh-hans/bsc/tx/0x25cc1d97a80d260ea4a755674e734e9cde3cec2707d65aab1c7d6640386158e4" target="_blank">转账 2</a>
   </div>
@@ -199,10 +200,19 @@
 const TOKENS = {
   MERL: { name: "MERL", contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9", totalSupply: 31364000, perUserAmount: 1000, fetchUserCountFromAPI: false, claimedUsers: 17612 },
   XTER: { name: "XTER", contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5", totalSupply: 9967366, perUserAmount: 294, fetchUserCountFromAPI: false, claimedUsers: 18942 },
-  TGT: { name: "TGT", contract: "0x6c58e4a513d3a8062e57f41a1442e003af14ebb5", totalSupply: 9962500, perUserAmount: 500, fetchUserCountFromAPI: false, claimedUsers: 8321 },
+  TGT:  { name: "TGT",  contract: "0x6c58e4a513d3a8062e57f41a1442e003af14ebb5", totalSupply: 9962500,  perUserAmount: 500, fetchUserCountFromAPI: false, claimedUsers: 8321 },
   Soon: { name: "Soon", contract: "0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply: 14964300, perUserAmount: 180, fetchUserCountFromAPI: false, claimedUsers: 43566 },
-  OBT: { name: "OBT", contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
-  HUMA: { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750, perUserAmount: 1250, fetchUserCountFromAPI: true }
+  OBT:  { name: "OBT",  contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
+  HUMA: { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 30664 },
+  PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: true }
+};
+const endTimes = {
+  MERL: "2025-05-21T17:00:00+08:00",
+  TGT: "2025-05-22T18:00:00+08:00",
+  Soon: "2025-05-24T16:00:00+08:00",
+  OBT: "2025-05-25T16:00:00+08:00",
+  HUMA: "2025-05-27T19:00:00+08:00",
+  PFVS: "2025-05-28T20:00:00+08:00"
 };
 let currentPrice = 0, countdownTimer = null;
 function formatInt(n) { return Math.floor(Number(n)).toLocaleString(); }
@@ -285,13 +295,6 @@ async function refreshData() {
   await queryClaimedData(token);
   const notice = document.getElementById("merlDeadline");
   const bar = document.getElementById("countdownBar");
-  const endTimes = {
-    MERL: "2025-05-21T17:00:00+08:00",
-    TGT: "2025-05-22T18:00:00+08:00",
-    Soon: "2025-05-24T16:00:00+08:00",
-    OBT: "2025-05-25T16:00:00+08:00",
-    HUMA: "2025-05-27T19:00:00+08:00"
-  };
   if (endTimes[selected]) {
     notice.innerHTML = `${selected} 领取截止时间：${endTimes[selected].replace("T", " ").replace("+08:00", "")}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
     notice.style.display = "block";
