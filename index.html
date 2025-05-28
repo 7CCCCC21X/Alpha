@@ -196,7 +196,7 @@ const TOKENS = {
   Soon: { name: "Soon", contract: "0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply: 14964300, perUserAmount: 180, fetchUserCountFromAPI: false, claimedUsers: 43566 },
   OBT:  { name: "OBT",  contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
   HUMA: { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 30664 },
-  PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: true }
+  PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: false, claimedUsers: 7358 }
 };
 
 const endTimes = {
@@ -227,15 +227,37 @@ async function fetchUserCount(contract) {
   }
 }
 async function fetchPrice(contract) {
+  let priceDex = 0, priceGecko = 0;
   try {
-    const res = await fetch(`https://api.dexscreener.com/latest/dex/search/?q=${contract}`);
-    const data = await res.json();
-    const price = data.pairs[0]?.priceUsd;
-    currentPrice = price ? parseFloat(price) : 0;
-    document.getElementById("priceUsd").innerText = currentPrice > 0 ? formatPrice(currentPrice) : "未找到价格";
-  } catch {
-    currentPrice = 0;
-    document.getElementById("priceUsd").innerText = "获取失败";
+    const resDex = await fetch(`https://api.dexscreener.com/latest/dex/search/?q=${contract}`);
+    const dataDex = await resDex.json();
+    const pair = dataDex.pairs.find(p => {
+      const quote = p.quoteToken.symbol?.toUpperCase();
+      return (quote === 'USDT' || quote === 'USDC') && Number(p.liquidity?.usd || 0) > 5000;
+    });
+    priceDex = pair?.priceUsd ? parseFloat(pair.priceUsd) : 0;
+  } catch (e) {
+    priceDex = 0;
+  }
+
+  try {
+    const resGecko = await fetch(`https://api.geckoterminal.com/api/v2/search/pools?query=${contract}`);
+    const dataGecko = await resGecko.json();
+    const pool = dataGecko.data?.find(p => {
+      const quote = p.attributes?.quote_token_symbol?.toUpperCase();
+      const liquidity = Number(p.attributes?.reserve_in_usd || 0);
+      return (quote === 'USDT' || quote === 'USDC') && liquidity > 5000;
+    });
+    priceGecko = pool?.attributes?.price_usd ? parseFloat(pool.attributes.price_usd) : 0;
+  } catch (e) {
+    priceGecko = 0;
+  }
+
+  currentPrice = Math.max(priceDex, priceGecko);
+  if (currentPrice > 0) {
+    document.getElementById("priceUsd").innerText = formatPrice(currentPrice);
+  } else {
+    document.getElementById("priceUsd").innerText = "未找到价格";
   }
 }
 async function queryClaimedData(token) {
