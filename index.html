@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="zh">
 <head>
@@ -133,7 +132,8 @@
   <div class="control">
     <button id="refreshBtn" onclick="refreshData()">🔄 刷新数据</button>
     <select id="tokenSelect" onchange="refreshData()">
-      <option value="SOPH" selected>SOPH</option>
+      <option value="ASRR" selected>ASRR</option>
+      <option value="SOPH">SOPH</option>
       <option value="OBT">OBT</option>
       <option value="MERL">MERL</option>
       <option value="XTER">XTER</option>
@@ -190,6 +190,7 @@
 
 <script>
 const TOKENS = {
+  ASRR: { name: "ASRR", contract: "0xf7626c7ff7b778aaf187d508d056a9398d9545d1", totalSupply: 1986966, perUserAmount: 133, fetchUserCountFromAPI: true },
   SOPH: { name: "SOPH", contract: "0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742", totalSupply: 99743750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 52907 },
   MERL: { name: "MERL", contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9", totalSupply: 31364000, perUserAmount: 1000, fetchUserCountFromAPI: false, claimedUsers: 17612 },
   XTER: { name: "XTER", contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5", totalSupply: 9967366, perUserAmount: 294, fetchUserCountFromAPI: false, claimedUsers: 18942 },
@@ -200,8 +201,8 @@ const TOKENS = {
   PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: false, claimedUsers: 7358 }
 };
 
-
 const endTimes = {
+  ASRR: "2025-05-31T21:00:00+08:00",
   SOPH: "2025-05-29T20:05:00+08:00",
   MERL: "2025-05-21T17:00:00+08:00",
   TGT: "2025-05-22T18:00:00+08:00",
@@ -210,6 +211,7 @@ const endTimes = {
   HUMA: "2025-05-27T19:00:00+08:00",
   PFVS: "2025-05-28T20:00:00+08:00"
 };
+
 
 let currentPrice = 0, countdownTimer = null;
 function formatInt(n) { return Math.floor(Number(n)).toLocaleString(); }
