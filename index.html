@@ -132,7 +132,7 @@
   <div class="control">
     <button id="refreshBtn" onclick="refreshData()">🔄 刷新数据</button>
     <select id="tokenSelect" onchange="refreshData()">
-      <option value="ASRR" selected>ASRR</option>
+      <option value="ASRR">ASRR</option>
       <option value="SOPH">SOPH</option>
       <option value="OBT">OBT</option>
       <option value="MERL">MERL</option>
@@ -141,6 +141,7 @@
       <option value="Soon">Soon</option>
       <option value="HUMA">HUMA</option>
       <option value="PFVS">PFVS</option>
+      <option value="TAIKO" selected>TAIKO</option>
     </select>
   </div>
   <div class="link-buttons">
@@ -190,7 +191,7 @@
 
 <script>
 const TOKENS = {
-  ASRR: { name: "ASRR", contract: "0xf7626c7ff7b778aaf187d508d056a9398d9545d1", totalSupply: 2986966, perUserAmount: 133, fetchUserCountFromAPI: true },
+  ASRR: { name: "ASRR", contract: "0xf7626c7ff7b778aaf187d508d056a9398d9545d1", totalSupply: 2986966, perUserAmount: 133, fetchUserCountFromAPI: false, claimedUsers: 13174 },
   SOPH: { name: "SOPH", contract: "0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742", totalSupply: 99743750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 52907 },
   MERL: { name: "MERL", contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9", totalSupply: 31364000, perUserAmount: 1000, fetchUserCountFromAPI: false, claimedUsers: 17612 },
   XTER: { name: "XTER", contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5", totalSupply: 9967366, perUserAmount: 294, fetchUserCountFromAPI: false, claimedUsers: 18942 },
@@ -198,7 +199,8 @@ const TOKENS = {
   Soon: { name: "Soon", contract: "0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply: 14964300, perUserAmount: 180, fetchUserCountFromAPI: false, claimedUsers: 43566 },
   OBT:  { name: "OBT",  contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
   HUMA: { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 30664 },
-  PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: false, claimedUsers: 7358 }
+  PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: false, claimedUsers: 7358 },
+  TAIKO: { name: "TAIKO", contract: "0x30c60b20c25b2810ca524810467a0c342294fc61", totalSupply: 9900000, perUserAmount: 130, fetchUserCountFromAPI: true, claimedUsers: 0 }
 };
 
 const endTimes = {
@@ -209,10 +211,9 @@ const endTimes = {
   Soon: "2025-05-24T16:00:00+08:00",
   OBT: "2025-05-25T16:00:00+08:00",
   HUMA: "2025-05-27T19:00:00+08:00",
-  PFVS: "2025-05-28T20:00:00+08:00"
+  PFVS: "2025-05-28T20:00:00+08:00",
+  TAIKO: "2025-06-01T14:00:00+08:00"
 };
-
-
 let currentPrice = 0, countdownTimer = null;
 function formatInt(n) { return Math.floor(Number(n)).toLocaleString(); }
 function formatPrice(n) { return Number(n).toFixed(4) + " USD"; }
