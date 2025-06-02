@@ -141,7 +141,8 @@
       <option value="Soon">Soon</option>
       <option value="HUMA">HUMA</option>
       <option value="PFVS">PFVS</option>
-      <option value="TAIKO" selected>TAIKO</option>
+      <option value="TAIKO">TAIKO</option>
+      <option value="EDGEN" selected>EDGEN</option>
     </select>
   </div>
   <div class="link-buttons">
@@ -200,7 +201,8 @@ const TOKENS = {
   OBT:  { name: "OBT",  contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
   HUMA: { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 30664 },
   PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: false, claimedUsers: 7358 },
-  TAIKO: { name: "TAIKO", contract: "0x30c60b20c25b2810ca524810467a0c342294fc61", totalSupply: 9900000, perUserAmount: 130, fetchUserCountFromAPI: true, claimedUsers: 0 }
+  TAIKO: { name: "TAIKO", contract: "0x30c60b20c25b2810ca524810467a0c342294fc61", totalSupply: 9900000, perUserAmount: 130, fetchUserCountFromAPI: false, claimedUsers: 43338 },
+  EDGEN: { name: "EDGEN", contract: "0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562", totalSupply: 29700000, perUserAmount: 1111, fetchUserCountFromAPI: true, claimedUsers: 0 }
 };
 
 const endTimes = {
@@ -212,9 +214,12 @@ const endTimes = {
   OBT: "2025-05-25T16:00:00+08:00",
   HUMA: "2025-05-27T19:00:00+08:00",
   PFVS: "2025-05-28T20:00:00+08:00",
-  TAIKO: "2025-06-01T14:00:00+08:00"
+  TAIKO: "2025-06-01T14:00:00+08:00",
+  EDGEN: "2025-06-03T18:30:00+08:00"
 };
+
 let currentPrice = 0, countdownTimer = null;
+
 function formatInt(n) { return Math.floor(Number(n)).toLocaleString(); }
 function formatPrice(n) { return Number(n).toFixed(4) + " USD"; }
 function formatValue(n) { return Math.floor(Number(n)).toLocaleString() + " USD"; }
@@ -241,10 +246,7 @@ async function fetchPrice(contract) {
       return (quote === 'USDT' || quote === 'USDC') && Number(p.liquidity?.usd || 0) > 5000;
     });
     priceDex = pair?.priceUsd ? parseFloat(pair.priceUsd) : 0;
-  } catch (e) {
-    priceDex = 0;
-  }
-
+  } catch {}
   try {
     const resGecko = await fetch(`https://api.geckoterminal.com/api/v2/search/pools?query=${contract}`);
     const dataGecko = await resGecko.json();
@@ -254,16 +256,9 @@ async function fetchPrice(contract) {
       return (quote === 'USDT' || quote === 'USDC') && liquidity > 5000;
     });
     priceGecko = pool?.attributes?.price_usd ? parseFloat(pool.attributes.price_usd) : 0;
-  } catch (e) {
-    priceGecko = 0;
-  }
-
+  } catch {}
   currentPrice = Math.max(priceDex, priceGecko);
-  if (currentPrice > 0) {
-    document.getElementById("priceUsd").innerText = formatPrice(currentPrice);
-  } else {
-    document.getElementById("priceUsd").innerText = "未找到价格";
-  }
+  document.getElementById("priceUsd").innerText = currentPrice ? formatPrice(currentPrice) : "未找到价格";
 }
 async function queryClaimedData(token) {
   let claimedUsers = token.claimedUsers;
