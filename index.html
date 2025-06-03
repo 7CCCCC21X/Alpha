@@ -142,7 +142,8 @@
       <option value="HUMA">HUMA</option>
       <option value="PFVS">PFVS</option>
       <option value="TAIKO">TAIKO</option>
-      <option value="EDGEN" selected>EDGEN</option>
+      <option value="EDGEN">EDGEN</option>
+      <option value="SQD" selected>SQD</option>
     </select>
   </div>
   <div class="link-buttons">
@@ -202,7 +203,8 @@ const TOKENS = {
   HUMA: { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 30664 },
   PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: false, claimedUsers: 7358 },
   TAIKO: { name: "TAIKO", contract: "0x30c60b20c25b2810ca524810467a0c342294fc61", totalSupply: 9900000, perUserAmount: 130, fetchUserCountFromAPI: false, claimedUsers: 43338 },
-  EDGEN: { name: "EDGEN", contract: "0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562", totalSupply: 29700000, perUserAmount: 1111, fetchUserCountFromAPI: true, claimedUsers: 0 }
+  EDGEN: { name: "EDGEN", contract: "0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562", totalSupply: 29700000, perUserAmount: 1111, fetchUserCountFromAPI: true, claimedUsers: 0 },
+  SQD:   { name: "SQD", contract: "0xe50e3d1a46070444f44df911359033f2937fcc13", totalSupply: 29781675, perUserAmount: 424, fetchUserCountFromAPI: true, claimedUsers: 0 }
 };
 
 const endTimes = {
@@ -215,38 +217,38 @@ const endTimes = {
   HUMA: "2025-05-27T19:00:00+08:00",
   PFVS: "2025-05-28T20:00:00+08:00",
   TAIKO: "2025-06-01T14:00:00+08:00",
-  EDGEN: "2025-06-03T18:30:00+08:00"
+  EDGEN: "2025-06-03T18:30:00+08:00",
+  SQD: "2025-06-03T21:00:00+08:00"
 };
 
-let currentPrice = 0, countdownTimer = null;
-
-function formatInt(n) { return Math.floor(Number(n)).toLocaleString(); }
-function formatPrice(n) { return Number(n).toFixed(4) + " USD"; }
-function formatValue(n) { return Math.floor(Number(n)).toLocaleString() + " USD"; }
-function updateTimestamp() {
-  const now = new Date(), h = String(now.getHours()).padStart(2, '0'), m = String(now.getMinutes()).padStart(2, '0'), s = String(now.getSeconds()).padStart(2, '0');
-  document.getElementById("lastUpdate").innerText = `📅 上次更新于 ${h}:${m}:${s}`;
-}
 async function fetchUserCount(contract) {
   try {
     const res = await fetch(`https://lingquss.vercel.app/api/proxy?address=${contract}`);
     const data = await res.json();
+    const addr = contract.toLowerCase();
+    if (addr === "0x0c808f0464c423d5ea4f4454fcc23b6e2ae75562") return data?.sold_count_1 || 0;
+    if (addr === "0xe50e3d1a46070444f44df911359033f2937fcc13") return data?.sold_count_2 || 0;
     return data?.sold_count || 0;
   } catch {
     return 0;
   }
 }
+
 async function fetchPrice(contract) {
   let priceDex = 0, priceGecko = 0;
   try {
     const resDex = await fetch(`https://api.dexscreener.com/latest/dex/search/?q=${contract}`);
     const dataDex = await resDex.json();
-    const pair = dataDex.pairs.find(p => {
+    const pairs = dataDex.pairs.filter(p => {
       const quote = p.quoteToken.symbol?.toUpperCase();
-      return (quote === 'USDT' || quote === 'USDC') && Number(p.liquidity?.usd || 0) > 5000;
+      const liquidity = Number(p.liquidity?.usd || 0);
+      return (quote === 'USDT' || quote === 'USDC') && liquidity > 1000;
     });
-    priceDex = pair?.priceUsd ? parseFloat(pair.priceUsd) : 0;
+    const topPair = pairs.reduce((max, p) =>
+      parseFloat(p.priceUsd || 0) > parseFloat(max.priceUsd || 0) ? p : max, { priceUsd: 0 });
+    priceDex = topPair?.priceUsd ? parseFloat(topPair.priceUsd) : 0;
   } catch {}
+
   try {
     const resGecko = await fetch(`https://api.geckoterminal.com/api/v2/search/pools?query=${contract}`);
     const dataGecko = await resGecko.json();
@@ -257,9 +259,11 @@ async function fetchPrice(contract) {
     });
     priceGecko = pool?.attributes?.price_usd ? parseFloat(pool.attributes.price_usd) : 0;
   } catch {}
+
   currentPrice = Math.max(priceDex, priceGecko);
-  document.getElementById("priceUsd").innerText = currentPrice ? formatPrice(currentPrice) : "未找到价格";
+  document.getElementById("priceUsd").innerText = currentPrice > 0 ? currentPrice.toFixed(4) + " USD" : "未找到价格";
 }
+
 async function queryClaimedData(token) {
   let claimedUsers = token.claimedUsers;
   if (token.fetchUserCountFromAPI) claimedUsers = await fetchUserCount(token.contract);
@@ -268,25 +272,30 @@ async function queryClaimedData(token) {
   const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
   const adjustedToken = (unclaimed / claimedUsers) * 0.7;
   const adjustedValue = adjustedToken * currentPrice;
+
   document.getElementById("tokenName").innerText = token.name;
-  document.getElementById("totalSupply").innerText = formatInt(token.totalSupply);
-  document.getElementById("claimedUsers").innerText = `${formatInt(Math.floor(token.totalSupply / token.perUserAmount))} / ${formatInt(claimedUsers)}`;
-  document.getElementById("claimedAmount").innerText = formatInt(claimedAmount);
-  document.getElementById("unclaimed").innerText = formatInt(unclaimed);
-  document.getElementById("totalValue").innerText = `( ${formatValue(token.totalSupply * currentPrice)} )`;
-  document.getElementById("unclaimedValue").innerText = `( ${formatValue(unclaimed * currentPrice)} )`;
-  document.getElementById("claimedValue").innerText = `( ${formatValue(claimedAmount * currentPrice)} )`;
+  document.getElementById("totalSupply").innerText = token.totalSupply.toLocaleString();
+  document.getElementById("claimedUsers").innerText = `${Math.floor(token.totalSupply / token.perUserAmount).toLocaleString()} / ${claimedUsers.toLocaleString()}`;
+  document.getElementById("claimedAmount").innerText = claimedAmount.toLocaleString();
+  document.getElementById("unclaimed").innerText = unclaimed.toLocaleString();
+  document.getElementById("totalValue").innerText = `( ${(token.totalSupply * currentPrice).toLocaleString()} USD )`;
+  document.getElementById("unclaimedValue").innerText = `( ${(unclaimed * currentPrice).toLocaleString()} USD )`;
+  document.getElementById("claimedValue").innerText = `( ${(claimedAmount * currentPrice).toLocaleString()} USD )`;
   document.getElementById("claimedPercent").innerText = claimedPercent;
   document.getElementById("progressBar").style.width = `${claimedPercent}%`;
   document.getElementById("surplusToken").innerText = adjustedToken.toFixed(3);
-  document.getElementById("surplusValue").innerText = formatValue(adjustedValue);
-  updateTimestamp();
+  document.getElementById("surplusValue").innerText = `${adjustedValue.toLocaleString()} USD`;
+  const now = new Date();
+  document.getElementById("lastUpdate").innerText = `📅 上次更新于 ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`;
 }
+
 function startCountdown(end, start) {
-  const endTime = new Date(end).getTime(), totalTime = endTime - new Date(start).getTime();
+  const endTime = new Date(end).getTime();
+  const totalTime = endTime - new Date(start).getTime();
   if (countdownTimer) clearInterval(countdownTimer);
   countdownTimer = setInterval(() => {
-    const now = new Date().getTime(), diff = endTime - now;
+    const now = new Date().getTime();
+    const diff = endTime - now;
     const inner = document.getElementById("countdownBarInner");
     document.getElementById("countdownBar").style.display = "block";
     if (diff <= 0) {
@@ -301,6 +310,7 @@ function startCountdown(end, start) {
     inner.style.width = `${progress.toFixed(1)}%`;
   }, 1000);
 }
+
 async function refreshData() {
   const btn = document.getElementById("refreshBtn");
   btn.disabled = true;
@@ -325,6 +335,7 @@ async function refreshData() {
   btn.disabled = false;
   btn.innerText = "🔄 刷新数据";
 }
+
 window.onload = () => { refreshData(); };
 </script>
 </body>
