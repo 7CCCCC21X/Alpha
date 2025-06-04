@@ -2,7 +2,8 @@
 <html lang="zh">
 <head>
   <meta charset="UTF-8" />
-  <title>币安Alpha空投实时查询</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>币安 Alpha 空投实时查询</title>
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <style>
     body {
@@ -19,7 +20,7 @@
       padding: 8px 16px;
       font-size: 15px;
       background-color: #0078d4;
-      color: white;
+      color: #fff;
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -37,14 +38,14 @@
       padding: 8px 16px;
       border-radius: 6px;
       border: 1px solid #0078d4;
-      background: white;
+      background: #fff;
       color: #0078d4;
       text-decoration: none;
       font-size: 14px;
     }
     .link-buttons a:hover {
-      background-color: #0078d4;
-      color: white;
+      background: #0078d4;
+      color: #fff;
     }
     #obtNote {
       max-width: 850px;
@@ -54,6 +55,12 @@
       margin: 0 auto 20px;
       border-radius: 6px;
       color: #333;
+      display: none;
+    }
+    #errorMsg {
+      color: red;
+      text-align: center;
+      margin-bottom: 10px;
       display: none;
     }
     table {
@@ -69,14 +76,11 @@
       text-align: center;
     }
     th {
-      background-color: #f2f2f2;
+      background: #f2f2f2;
       font-weight: bold;
     }
-    tr:hover { background-color: #f9fcff; }
-    .subtext {
-      font-size: 13px;
-      color: #777;
-    }
+    tr:hover { background: #f9fcff; }
+    .subtext { font-size: 13px; color: #777; }
     #lastUpdate, #author {
       text-align: center;
       margin-top: 16px;
@@ -101,15 +105,8 @@
       background: linear-gradient(to right, #0078d4, #00c6ff);
       transition: width 0.5s;
     }
-    .discount-note {
-      font-size: 13px;
-      color: #888;
-    }
-    #merlDeadline {
-      color: #e55353;
-      font-size: 15px;
-      display: none;
-    }
+    .discount-note { font-size: 13px; color: #888; }
+    #merlDeadline { color: #e55353; font-size: 15px; display: none; }
     #countdownBar {
       width: 80%;
       height: 8px;
@@ -122,16 +119,18 @@
     #countdownBarInner {
       height: 100%;
       width: 100%;
-      background-color: #e55353;
+      background: #e55353;
       transition: width 1s;
     }
   </style>
 </head>
 <body>
-  <h2>币安 Alpha空投实时数据展示</h2>
+  <h2>币安 Alpha 空投实时数据展示</h2>
+
   <div class="control">
     <button id="refreshBtn" onclick="refreshData()">🔄 刷新数据</button>
     <select id="tokenSelect" onchange="refreshData()">
+      <option value="LA" selected>LA</option>
       <option value="ASRR">ASRR</option>
       <option value="SOPH">SOPH</option>
       <option value="OBT">OBT</option>
@@ -145,14 +144,18 @@
       <option value="EDGEN">EDGEN</option>
       <option value="SQD">SQD</option>
       <option value="ZRC">ZRC</option>
-      <option value="BDXN" selected>BDXN</option>
+      <option value="BDXN">BDXN</option>
     </select>
   </div>
+
   <div class="link-buttons">
     <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 币安Alpha 分发空投地址传送门</a>
     <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank">📜 币安 Web3 IDO 部署合约地址传送门</a>
   </div>
+
+  <div id="errorMsg">⚠️ 数据加载失败，请稍后重试。</div>
   <div id="obtNote">...</div>
+
   <h3>📊 空投发放进度</h3>
   <table>
     <thead>
@@ -195,57 +198,56 @@
 
   <div id="lastUpdate">📅 上次更新于 --:--:--</div>
   <div id="author">👤 作者：<a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
-  <script>
-    let countdownTimer;
-    let currentPrice = 0;
 
-    const TOKENS = {
-      ASRR: { name: "ASRR", contract: "0xf7626c7ff7b778aaf187d508d056a9398d9545d1", totalSupply: 2986966, perUserAmount: 133, fetchUserCountFromAPI: false, claimedUsers: 13174 },
-      SOPH: { name: "SOPH", contract: "0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742", totalSupply: 99743750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 52907 },
-      MERL: { name: "MERL", contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9", totalSupply: 31364000, perUserAmount: 1000, fetchUserCountFromAPI: false, claimedUsers: 17612 },
-      XTER: { name: "XTER", contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5", totalSupply: 9967366, perUserAmount: 294, fetchUserCountFromAPI: false, claimedUsers: 18942 },
-      TGT:  { name: "TGT",  contract: "0x6c58e4a513d3a8062e57f41a1442e003af14ebb5", totalSupply: 9962500,  perUserAmount: 500, fetchUserCountFromAPI: false, claimedUsers: 8321 },
-      Soon: { name: "Soon", contract: "0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply: 14964300, perUserAmount: 180, fetchUserCountFromAPI: false, claimedUsers: 43566 },
-      OBT:  { name: "OBT",  contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000, perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
-      HUMA: { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750, perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 30664 },
-      PFVS: { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125, perUserAmount: 875, fetchUserCountFromAPI: false, claimedUsers: 7358 },
-      TAIKO: { name: "TAIKO", contract: "0x30c60b20c25b2810ca524810467a0c342294fc61", totalSupply: 9900000, perUserAmount: 130, fetchUserCountFromAPI: false, claimedUsers: 43338 },
-      EDGEN: { name: "EDGEN", contract: "0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562", totalSupply: 29700000, perUserAmount: 1111, fetchUserCountFromAPI: false, claimedUsers: 4062 },
-      SQD: { name: "SQD", contract: "0xe50e3d1a46070444f44df911359033f2937fcc13", totalSupply: 29781675, perUserAmount: 424, fetchUserCountFromAPI: false, claimedUsers: 46356 },
-      ZRC: { name: "ZRC", contract: "0xdac991621fd8048d9f235324780abd6c3ad26421", totalSupply: 178200000, perUserAmount: 2666, fetchUserCountFromAPI: true, claimedUsers: 0 },
-      BDXN: { name: "BDXN", contract: "0x1036b2379f506761f237fba7463857924ef21ce3", totalSupply: 29700000, perUserAmount: 900, fetchUserCountFromAPI: true, claimedUsers: 0 }
-    };
+<script>
+const TOKENS = {
+  LA:    { name: "LA", contract: "0x389AD4bb96d0D6EE5B6eF0EFAF4b7db0bA2e02a0", totalSupply: 4950000,    perUserAmount: 160,  fetchUserCountFromAPI: true,  claimedUsers: 0 },
+  ASRR:  { name: "ASRR", contract: "0xf7626c7ff7b778aaf187d508d056a9398d9545d1", totalSupply: 2986966,    perUserAmount: 133,  fetchUserCountFromAPI: false, claimedUsers: 13174 },
+  SOPH:  { name: "SOPH", contract: "0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742", totalSupply: 99743750,   perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 52907 },
+  OBT:   { name: "OBT",  contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000,  perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
+  MERL:  { name: "MERL", contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9", totalSupply: 31364000,   perUserAmount: 1000, fetchUserCountFromAPI: false, claimedUsers: 17612 },
+  XTER:  { name: "XTER", contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5", totalSupply: 9967366,    perUserAmount: 294,  fetchUserCountFromAPI: false, claimedUsers: 18942 },
+  TGT:   { name: "TGT",  contract: "0x6c58e4a513d3a8062e57f41a1442e003af14ebb5", totalSupply: 9962500,    perUserAmount: 500,  fetchUserCountFromAPI: false, claimedUsers: 8321 },
+  Soon:  { name: "Soon", contract: "0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply: 14964300,   perUserAmount: 180,  fetchUserCountFromAPI: false, claimedUsers: 43566 },
+  HUMA:  { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750,   perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 30664 },
+  PFVS:  { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125,   perUserAmount: 875,  fetchUserCountFromAPI: false, claimedUsers: 7358 },
+  TAIKO: { name: "TAIKO",contract: "0x30c60b20c25b2810ca524810467a0c342294fc61", totalSupply: 9900000,    perUserAmount: 130,  fetchUserCountFromAPI: false, claimedUsers: 43338 },
+  EDGEN: { name: "EDGEN",contract: "0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562", totalSupply: 29700000,   perUserAmount: 1111, fetchUserCountFromAPI: false, claimedUsers: 4062 },
+  SQD:   { name: "SQD",  contract: "0xe50e3d1a46070444f44df911359033f2937fcc13", totalSupply: 29781675,   perUserAmount: 424,  fetchUserCountFromAPI: false, claimedUsers: 46356 },
+  ZRC:   { name: "ZRC",  contract: "0xdac991621fd8048d9f235324780abd6c3ad26421", totalSupply: 178200000,  perUserAmount: 2666, fetchUserCountFromAPI: false, claimedUsers: 24871 },
+  BDXN:  { name: "BDXN", contract: "0x1036b2379f506761f237fba7463857924ef21ce3", totalSupply: 29700000,   perUserAmount: 900,  fetchUserCountFromAPI: false, claimedUsers: 19787 }
+};
 
-    const endTimes = {
-      ASRR: "2025-05-31T21:00:00+08:00",
-      SOPH: "2025-05-29T20:05:00+08:00",
-      MERL: "2025-05-21T17:00:00+08:00",
-      TGT: "2025-05-22T18:00:00+08:00",
-      Soon: "2025-05-24T16:00:00+08:00",
-      OBT: "2025-05-25T16:00:00+08:00",
-      HUMA: "2025-05-27T19:00:00+08:00",
-      PFVS: "2025-05-28T20:00:00+08:00",
-      TAIKO: "2025-06-01T14:00:00+08:00",
-      EDGEN: "2025-06-03T18:30:00+08:00",
-      SQD: "2025-06-03T21:00:00+08:00",
-      ZRC: "2025-06-04T16:30:00+08:00",
-      BDXN: "2025-06-04T18:00:00+08:00"
-    };
+const endTimes = {
+  LA:    "2025-06-05T20:00:00+08:00",
+  ASRR:  "2025-05-31T21:00:00+08:00",
+  SOPH:  "2025-05-29T20:05:00+08:00",
+  MERL:  "2025-05-21T17:00:00+08:00",
+  TGT:   "2025-05-22T18:00:00+08:00",
+  Soon:  "2025-05-24T16:00:00+08:00",
+  OBT:   "2025-05-25T16:00:00+08:00",
+  HUMA:  "2025-05-27T19:00:00+08:00",
+  PFVS:  "2025-05-28T20:00:00+08:00",
+  TAIKO: "2025-06-01T14:00:00+08:00",
+  EDGEN: "2025-06-03T18:30:00+08:00",
+  SQD:   "2025-06-03T21:00:00+08:00",
+  ZRC:   "2025-06-04T16:30:00+08:00",
+  BDXN:  "2025-06-04T18:00:00+08:00"
+};
 
-    async function fetchUserCount(contract) {
-      try {
-        const res = await fetch(`https://lingquss.vercel.app/api/proxy?address=${contract}`);
-        const data = await res.json();
-        const addr = contract.toLowerCase();
-        if (addr === "0x0c808f0464c423d5ea4f4454fcc23b6e2ae75562") return data?.sold_count_1 || 0;
-        if (addr === "0xe50e3d1a46070444f44df911359033f2937fcc13") return data?.sold_count_2 || 0;
-        if (addr === "0xdac991621fd8048d9f235324780abd6c3ad26421") return data?.sold_count_3 || 0;
-        if (addr === "0x1036b2379f506761f237fba7463857924ef21ce3") return data?.sold_count_4 || 0;
-        return data?.sold_count || 0;
-      } catch {
-        return 0;
-      }
-    }
+let countdownTimer;
+let currentPrice = 0;
+
+async function fetchUserCount(contract) {
+  try {
+    const res = await fetch(`https://lingquss.vercel.app/api/proxy?address=${contract}`);
+    const data = await res.json();
+    return typeof data?.sold_count_1 === "number" ? data.sold_count_1 : 0;
+  } catch {
+    document.getElementById("errorMsg").style.display = "block";
+    return 0;
+  }
+}
 
     async function fetchPrice(contract) {
       try {
@@ -259,87 +261,87 @@
       document.getElementById("priceUsd").innerText = currentPrice > 0 ? `${currentPrice.toFixed(4)} USD` : "未找到价格";
     }
 
-    function startCountdown(endTimeStr, startTime) {
-      const endTime = new Date(endTimeStr).getTime();
-      const totalTime = endTime - new Date(startTime).getTime();
+function startCountdown(endTimeStr, startTime) {
+  const endTime = new Date(endTimeStr).getTime();
+  const totalTime = endTime - new Date(startTime).getTime();
+  clearInterval(countdownTimer);
+  countdownTimer = setInterval(() => {
+    const now = Date.now();
+    const diff = endTime - now;
+    const inner = document.getElementById("countdownBarInner");
+    const bar = document.getElementById("countdownBar");
+    const countdown = document.getElementById("countdown");
+    if (diff <= 0) {
+      countdown.innerText = "已结束";
+      inner.style.width = "0%";
       clearInterval(countdownTimer);
-      countdownTimer = setInterval(() => {
-        const now = Date.now();
-        const diff = endTime - now;
-        const inner = document.getElementById("countdownBarInner");
-        const bar = document.getElementById("countdownBar");
-        const countdown = document.getElementById("countdown");
-        if (diff <= 0) {
-          countdown.innerText = "已结束";
-          inner.style.width = "0%";
-          clearInterval(countdownTimer);
-          return;
-        }
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const s = Math.floor((diff % 60000) / 1000);
-        countdown.innerText = `${h}小时 ${m}分 ${s}秒`;
-        const progress = ((totalTime - diff) / totalTime) * 100;
-        inner.style.width = `${progress.toFixed(1)}%`;
-        bar.style.display = "block";
-      }, 1000);
+      return;
     }
+    const h = Math.floor(diff / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    countdown.innerText = `${h}小时 ${m}分 ${s}秒`;
+    const progress = ((totalTime - diff) / totalTime) * 100;
+    inner.style.width = `${progress.toFixed(1)}%`;
+    bar.style.display = "block";
+  }, 1000);
+}
 
-    async function refreshData() {
-      const btn = document.getElementById("refreshBtn");
-      btn.disabled = true;
-      btn.innerText = "⏳ 加载中...";
+async function refreshData() {
+  const btn = document.getElementById("refreshBtn");
+  btn.disabled = true;
+  btn.innerText = "⏳ 加载中...";
 
-      const selected = document.getElementById("tokenSelect").value;
-      const token = TOKENS[selected];
-      const note = document.getElementById("obtNote");
-      note.style.display = selected === "OBT" ? "block" : "none";
+  const selected = document.getElementById("tokenSelect").value;
+  const token = TOKENS[selected];
+  const note = document.getElementById("obtNote");
+  note.style.display = selected === "OBT" ? "block" : "none";
 
-      await fetchPrice(token.contract);
-      let claimedUsers = token.claimedUsers;
-      if (token.fetchUserCountFromAPI) claimedUsers = await fetchUserCount(token.contract);
+  await fetchPrice(token.contract);
+  let claimedUsers = token.claimedUsers;
+  if (token.fetchUserCountFromAPI) claimedUsers = await fetchUserCount(token.contract);
 
-      const claimedAmount = claimedUsers * token.perUserAmount;
-      const unclaimed = token.totalSupply - claimedAmount;
-      const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
-      const adjustedToken = (unclaimed / (claimedUsers || 1)) * 0.7;
-      const adjustedValue = adjustedToken * currentPrice;
+  const claimedAmount = claimedUsers * token.perUserAmount;
+  const unclaimed = token.totalSupply - claimedAmount;
+  const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
+  const adjustedToken = (unclaimed / (claimedUsers || 1)) * 0.7;
+  const adjustedValue = adjustedToken * currentPrice;
 
-      document.getElementById("tokenName").innerText = token.name;
-      document.getElementById("totalSupply").innerText = token.totalSupply.toLocaleString();
-      document.getElementById("claimedUsers").innerText = `${Math.floor(token.totalSupply / token.perUserAmount).toLocaleString()} / ${claimedUsers.toLocaleString()}`;
-      document.getElementById("claimedAmount").innerText = claimedAmount.toLocaleString();
-      document.getElementById("unclaimed").innerText = unclaimed.toLocaleString();
-      document.getElementById("totalValue").innerText = `( ${(token.totalSupply * currentPrice).toLocaleString()} USD )`;
-      document.getElementById("unclaimedValue").innerText = `( ${(unclaimed * currentPrice).toLocaleString()} USD )`;
-      document.getElementById("claimedValue").innerText = `( ${Math.round(claimedAmount * currentPrice).toLocaleString()} USD )`;
-      document.getElementById("claimedPercent").innerText = claimedPercent;
-      document.getElementById("progressBar").style.width = `${claimedPercent}%`;
-      document.getElementById("surplusToken").innerText = adjustedToken.toFixed(3);
-      document.getElementById("surplusValue").innerText = `${adjustedValue.toLocaleString()} USD`;
+  document.getElementById("tokenName").innerText = token.name;
+  document.getElementById("totalSupply").innerText = token.totalSupply.toLocaleString();
+  document.getElementById("claimedUsers").innerText = `${Math.floor(token.totalSupply / token.perUserAmount).toLocaleString()} / ${claimedUsers.toLocaleString()}`;
+  document.getElementById("claimedAmount").innerText = claimedAmount.toLocaleString();
+  document.getElementById("unclaimed").innerText = unclaimed.toLocaleString();
+  document.getElementById("totalValue").innerText = `( ${Math.floor(token.totalSupply * currentPrice).toLocaleString()} USD )`;
+  document.getElementById("unclaimedValue").innerText = `( ${Math.floor(unclaimed * currentPrice).toLocaleString()} USD )`;
+  document.getElementById("claimedValue").innerText = `( ${Math.floor(claimedAmount * currentPrice).toLocaleString()} USD )`;
+  document.getElementById("claimedPercent").innerText = claimedPercent;
+  document.getElementById("progressBar").style.width = `${claimedPercent}%`;
+  document.getElementById("surplusToken").innerText = Math.floor(adjustedToken);
+  document.getElementById("surplusValue").innerText = `${Math.floor(adjustedValue).toLocaleString()} USD`;
 
-      const now = new Date();
-      document.getElementById("lastUpdate").innerText = `📅 上次更新于 ${now.toTimeString().slice(0, 8)}`;
+  const now = new Date();
+  document.getElementById("lastUpdate").innerText = `📅 上次更新于 ${now.toTimeString().slice(0, 8)}`;
 
-      const deadlineBox = document.getElementById("merlDeadline");
-      const countdownBar = document.getElementById("countdownBar");
-      if (endTimes[selected]) {
-        const timeStr = endTimes[selected].replace("T", " ").replace("+08:00", "");
-        deadlineBox.innerHTML = `${selected} 领取截止时间：${timeStr}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
-        deadlineBox.style.display = "block";
-        countdownBar.style.display = "block";
-        startCountdown(endTimes[selected], now);
-      } else {
-        deadlineBox.style.display = "none";
-        countdownBar.style.display = "none";
-        clearInterval(countdownTimer);
-      }
+  const deadlineBox = document.getElementById("merlDeadline");
+  const countdownBar = document.getElementById("countdownBar");
+  if (endTimes[selected]) {
+    const timeStr = endTimes[selected].replace("T", " ").replace("+08:00", "");
+    deadlineBox.innerHTML = `${selected} 领取截止时间：${timeStr}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
+    deadlineBox.style.display = "block";
+    countdownBar.style.display = "block";
+    startCountdown(endTimes[selected], now);
+  } else {
+    deadlineBox.style.display = "none";
+    countdownBar.style.display = "none";
+    clearInterval(countdownTimer);
+  }
 
-      btn.disabled = false;
-      btn.innerText = "🔄 刷新数据";
-    }
+  btn.disabled = false;
+  btn.innerText = "🔄 刷新数据";
+}
 
-    window.onload = refreshData;
-  </script>
+window.onload = refreshData;
+</script>
 </body>
 </html>
