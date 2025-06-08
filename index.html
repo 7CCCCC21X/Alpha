@@ -7,121 +7,41 @@
   <link rel="icon" href="favicon.ico" type="image/x-icon" />
   <style>
     body {
-      font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-      background: #f9f9f9;
-      color: #333;
-      max-width: 900px;
-      margin: 40px auto;
-      padding: 20px;
+      font-family: "Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+      background:#f9f9f9;color:#333;max-width:900px;margin:40px auto;padding:20px;
     }
-    h2, h3 { text-align: center; margin-bottom: 20px; }
-    .control, .link-buttons { text-align: center; margin-bottom: 20px; }
-    button {
-      padding: 8px 16px;
-      font-size: 15px;
-      background-color: #0078d4;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: background-color 0.2s;
+    h2,h3{text-align:center;margin-bottom:20px}
+    .control,.link-buttons{text-align:center;margin-bottom:20px}
+    button{
+      padding:8px 16px;font-size:15px;background:#0078d4;color:#fff;
+      border:none;border-radius:6px;cursor:pointer;transition:background-color .2s;
     }
-    button:hover { background-color: #005fa3; }
-    select {
-      padding: 6px 10px;
-      font-size: 15px;
-      margin-left: 10px;
+    button:hover{background:#005fa3}
+    select{padding:6px 10px;font-size:15px;margin-left:10px}
+    .link-buttons a{
+      display:inline-block;margin:6px;padding:8px 16px;border-radius:6px;
+      border:1px solid #0078d4;background:#fff;color:#0078d4;text-decoration:none;font-size:14px;
     }
-    .link-buttons a {
-      display: inline-block;
-      margin: 6px;
-      padding: 8px 16px;
-      border-radius: 6px;
-      border: 1px solid #0078d4;
-      background: #fff;
-      color: #0078d4;
-      text-decoration: none;
-      font-size: 14px;
+    .link-buttons a:hover{background:#0078d4;color:#fff}
+    #obtNote{max-width:850px;background:#f5f5f5;border-left:4px solid #0078d4;
+      padding:12px 16px;margin:0 auto 20px;border-radius:6px;color:#333;display:none}
+    #errorMsg{color:red;text-align:center;margin-bottom:10px;display:none}
+    table{
+      width:100%;border-collapse:collapse;background:#fff;
+      box-shadow:0 2px 5px rgba(0,0,0,.05);border-radius:8px;
     }
-    .link-buttons a:hover {
-      background: #0078d4;
-      color: #fff;
-    }
-    #obtNote {
-      max-width: 850px;
-      background: #f5f5f5;
-      border-left: 4px solid #0078d4;
-      padding: 12px 16px;
-      margin: 0 auto 20px;
-      border-radius: 6px;
-      color: #333;
-      display: none;
-    }
-    #errorMsg {
-      color: red;
-      text-align: center;
-      margin-bottom: 10px;
-      display: none;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-      border-radius: 8px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 12px;
-      text-align: center;
-    }
-    th {
-      background: #f2f2f2;
-      font-weight: bold;
-    }
-    tr:hover { background: #f9fcff; }
-    .subtext { font-size: 13px; color: #777; }
-    #lastUpdate, #author {
-      text-align: center;
-      margin-top: 16px;
-      color: #777;
-      font-size: 14px;
-    }
-    #progressBlock, #surplusBlock, #merlDeadline {
-      text-align: center;
-      margin-top: 20px;
-    }
-    #progressBarContainer {
-      width: 80%;
-      margin: 0 auto;
-      background: #eee;
-      border-radius: 6px;
-      overflow: hidden;
-      height: 16px;
-    }
-    #progressBar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(to right, #0078d4, #00c6ff);
-      transition: width 0.5s;
-    }
-    .discount-note { font-size: 13px; color: #888; }
-    #merlDeadline { color: #e55353; font-size: 15px; display: none; }
-    #countdownBar {
-      width: 80%;
-      height: 8px;
-      background: #ffe4e4;
-      border-radius: 6px;
-      overflow: hidden;
-      margin: 6px auto 0;
-      display: none;
-    }
-    #countdownBarInner {
-      height: 100%;
-      width: 100%;
-      background: #e55353;
-      transition: width 1s;
-    }
+    th,td{border:1px solid #ddd;padding:12px;text-align:center}
+    th{background:#f2f2f2;font-weight:bold}
+    tr:hover{background:#f9fcff}
+    .subtext{font-size:13px;color:#777}
+    #lastUpdate,#author{text-align:center;margin-top:16px;color:#777;font-size:14px}
+    #progressBlock,#surplusBlock,#merlDeadline{text-align:center;margin-top:20px}
+    #progressBarContainer{width:80%;margin:0 auto;background:#eee;border-radius:6px;overflow:hidden;height:16px}
+    #progressBar{height:100%;width:0%;background:linear-gradient(to right,#0078d4,#00c6ff);transition:width .5s}
+    .discount-note{font-size:13px;color:#888}
+    #merlDeadline{color:#e55353;font-size:15px;display:none}
+    #countdownBar{width:80%;height:8px;background:#ffe4e4;border-radius:6px;overflow:hidden;margin:6px auto 0;display:none}
+    #countdownBarInner{height:100%;width:100%;background:#e55353;transition:width 1s}
   </style>
 </head>
 <body>
@@ -145,7 +65,8 @@
       <option value="SQD">SQD</option>
       <option value="ZRC">ZRC</option>
       <option value="BDXN">BDXN</option>
-      <option value="AB" selected>AB</option>
+      <option value="AB">AB</option>
+      <option value="OL" selected>OL</option>
     </select>
   </div>
 
@@ -202,149 +123,127 @@
 
 <script>
 const TOKENS = {
-  LA:    { name: "LA", contract: "0x389AD4bb96d0D6EE5B6eF0EFAF4b7db0bA2e02a0", totalSupply: 4950000,    perUserAmount: 160,  fetchUserCountFromAPI: false,  claimedUsers: 19856 },
-  ASRR:  { name: "ASRR", contract: "0xf7626c7ff7b778aaf187d508d056a9398d9545d1", totalSupply: 2986966,    perUserAmount: 133,  fetchUserCountFromAPI: false, claimedUsers: 13174 },
-  SOPH:  { name: "SOPH", contract: "0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742", totalSupply: 99743750,   perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 52907 },
-  OBT:   { name: "OBT",  contract: "0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply: 179560000,  perUserAmount: 8000, fetchUserCountFromAPI: false, claimedUsers: 12872 },
-  MERL:  { name: "MERL", contract: "0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9", totalSupply: 31364000,   perUserAmount: 1000, fetchUserCountFromAPI: false, claimedUsers: 17612 },
-  XTER:  { name: "XTER", contract: "0x103071da56e7cd95b415320760d6a0ddc4da1ca5", totalSupply: 9967366,    perUserAmount: 294,  fetchUserCountFromAPI: false, claimedUsers: 18942 },
-  TGT:   { name: "TGT",  contract: "0x6c58e4a513d3a8062e57f41a1442e003af14ebb5", totalSupply: 9962500,    perUserAmount: 500,  fetchUserCountFromAPI: false, claimedUsers: 8321 },
-  Soon:  { name: "Soon", contract: "0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply: 14964300,   perUserAmount: 180,  fetchUserCountFromAPI: false, claimedUsers: 43566 },
-  HUMA:  { name: "HUMA", contract: "0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply: 59873750,   perUserAmount: 1250, fetchUserCountFromAPI: false, claimedUsers: 30664 },
-  PFVS:  { name: "PFVS", contract: "0x3157874a7508fcf972379d24590c6806522b784f", totalSupply: 17457125,   perUserAmount: 875,  fetchUserCountFromAPI: false, claimedUsers: 7358 },
-  TAIKO: { name: "TAIKO",contract: "0x30c60b20c25b2810ca524810467a0c342294fc61", totalSupply: 9900000,    perUserAmount: 130,  fetchUserCountFromAPI: false, claimedUsers: 43338 },
-  EDGEN: { name: "EDGEN",contract: "0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562", totalSupply: 29700000,   perUserAmount: 1111, fetchUserCountFromAPI: false, claimedUsers: 4062 },
-  SQD:   { name: "SQD",  contract: "0xe50e3d1a46070444f44df911359033f2937fcc13", totalSupply: 29781675,   perUserAmount: 424,  fetchUserCountFromAPI: false, claimedUsers: 46356 },
-  ZRC:   { name: "ZRC",  contract: "0xdac991621fd8048d9f235324780abd6c3ad26421", totalSupply: 178200000,  perUserAmount: 2666, fetchUserCountFromAPI: false, claimedUsers: 24871 },
-  BDXN:  { name: "BDXN", contract: "0x1036b2379f506761f237fba7463857924ef21ce3", totalSupply: 29700000,   perUserAmount: 900,  fetchUserCountFromAPI: false, claimedUsers: 19787 },
-  AB: { name: "AB", contract: "0x95034f653d5d161890836ad2b6b8cc49d14e029a", totalSupply: 489177123, perUserAmount: 9882, fetchUserCountFromAPI: true }
+  LA:    { name:"LA",    contract:"0x389AD4bb96d0D6EE5B6eF0EFAF4b7db0bA2e02a0", totalSupply:4_950_000,   perUserAmount:160,  fetchUserCountFromAPI:false, claimedUsers:19_856 },
+  ASRR:  { name:"ASRR",  contract:"0xf7626c7ff7b778aaf187d508d056a9398d9545d1", totalSupply:2_986_966,   perUserAmount:133,  fetchUserCountFromAPI:false, claimedUsers:13_174 },
+  SOPH:  { name:"SOPH",  contract:"0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742", totalSupply:99_743_750,  perUserAmount:1250, fetchUserCountFromAPI:false, claimedUsers:52_907 },
+  OBT:   { name:"OBT",   contract:"0xcef5b397051fc92026249670e918c0ad7b8585e4", totalSupply:179_560_000, perUserAmount:8000, fetchUserCountFromAPI:false, claimedUsers:12_872 },
+  MERL:  { name:"MERL",  contract:"0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9", totalSupply:31_364_000,  perUserAmount:1000, fetchUserCountFromAPI:false, claimedUsers:17_612 },
+  XTER:  { name:"XTER",  contract:"0x103071da56e7cd95b415320760d6a0ddc4da1ca5", totalSupply:9_967_366,   perUserAmount:294,  fetchUserCountFromAPI:false, claimedUsers:18_942 },
+  TGT:   { name:"TGT",   contract:"0x6c58e4a513d3a8062e57f41a1442e003af14ebb5", totalSupply:9_962_500,   perUserAmount:500,  fetchUserCountFromAPI:false, claimedUsers:8_321 },
+  Soon:  { name:"Soon",  contract:"0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721", totalSupply:14_964_300,  perUserAmount:180,  fetchUserCountFromAPI:false, claimedUsers:43_566 },
+  HUMA:  { name:"HUMA",  contract:"0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6", totalSupply:59_873_750,  perUserAmount:1250, fetchUserCountFromAPI:false, claimedUsers:30_664 },
+  PFVS:  { name:"PFVS",  contract:"0x3157874a7508fcf972379d24590c6806522b784f", totalSupply:17_457_125,  perUserAmount:875,  fetchUserCountFromAPI:false, claimedUsers:7_358 },
+  TAIKO: { name:"TAIKO", contract:"0x30c60b20c25b2810ca524810467a0c342294fc61", totalSupply:9_900_000,   perUserAmount:130,  fetchUserCountFromAPI:false, claimedUsers:43_338 },
+  EDGEN: { name:"EDGEN", contract:"0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562", totalSupply:29_700_000,  perUserAmount:1111, fetchUserCountFromAPI:false, claimedUsers:4_062 },
+  SQD:   { name:"SQD",   contract:"0xe50e3d1a46070444f44df911359033f2937fcc13", totalSupply:29_781_675,  perUserAmount:424,  fetchUserCountFromAPI:false, claimedUsers:46_356 },
+  ZRC:   { name:"ZRC",   contract:"0xdac991621fd8048d9f235324780abd6c3ad26421", totalSupply:178_200_000, perUserAmount:2666, fetchUserCountFromAPI:false, claimedUsers:24_871 },
+  BDXN:  { name:"BDXN",  contract:"0x1036b2379f506761f237fba7463857924ef21ce3", totalSupply:29_700_000,  perUserAmount:900,  fetchUserCountFromAPI:false, claimedUsers:19_787 },
+  AB:    { name:"AB",    contract:"0x95034f653d5d161890836ad2b6b8cc49d14e029a", totalSupply:489_177_123, perUserAmount:9882, fetchUserCountFromAPI:false, claimedUsers:24_928 },
+  OL:    { name:"OL",    contract:"0x3f160760535eb715d5809a26cf55408a2d9844c1", totalSupply:61_875_000,  perUserAmount:1836, fetchUserCountFromAPI:true  }
 };
 
 const endTimes = {
-  LA: "2025-06-05T20:00:00+08:00",
-  ASRR: "2025-05-31T21:00:00+08:00",
-  SOPH: "2025-05-29T20:05:00+08:00",
-  MERL: "2025-05-21T17:00:00+08:00",
-  TGT: "2025-05-22T18:00:00+08:00",
-  Soon: "2025-05-24T16:00:00+08:00",
-  OBT: "2025-05-25T16:00:00+08:00",
-  HUMA: "2025-05-27T19:00:00+08:00",
-  PFVS: "2025-05-28T20:00:00+08:00",
-  TAIKO: "2025-06-01T14:00:00+08:00",
-  EDGEN: "2025-06-03T18:30:00+08:00",
-  SQD: "2025-06-03T21:00:00+08:00",
-  ZRC: "2025-06-04T16:30:00+08:00",
-  BDXN: "2025-06-04T18:00:00+08:00",
-  AB: "2025-06-08T14:00:00+08:00"
+  LA:"2025-06-05T20:00:00+08:00", ASRR:"2025-05-31T21:00:00+08:00",
+  SOPH:"2025-05-29T20:05:00+08:00", MERL:"2025-05-21T17:00:00+08:00",
+  TGT:"2025-05-22T18:00:00+08:00", Soon:"2025-05-24T16:00:00+08:00",
+  OBT:"2025-05-25T16:00:00+08:00", HUMA:"2025-05-27T19:00:00+08:00",
+  PFVS:"2025-05-28T20:00:00+08:00", TAIKO:"2025-06-01T14:00:00+08:00",
+  EDGEN:"2025-06-03T18:30:00+08:00", SQD:"2025-06-03T21:00:00+08:00",
+  ZRC:"2025-06-04T16:30:00+08:00", BDXN:"2025-06-04T18:00:00+08:00",
+  AB:"2025-06-08T14:00:00+08:00", OL:"2025-06-09T14:00:00+08:00"
 };
 
-let countdownTimer;
-let currentPrice = 0;
+let countdownTimer,currentPrice=0;
 
-async function fetchUserCount(contract) {
-  try {
-    const res = await fetch(`https://lingquss.vercel.app/api/proxy?address=${contract}`);
-    const data = await res.json();
-    return typeof data?.sold_count_1 === "number" ? data.sold_count_1 : 0;
-  } catch {
-    document.getElementById("errorMsg").style.display = "block";
+async function fetchUserCount(contract){
+  try{
+    const res=await fetch(`https://lingquss.vercel.app/api/proxy?address=${contract}`);
+    const data=await res.json();
+    return typeof data?.sold_count_1==="number"?data.sold_count_1:0;
+  }catch{
+    document.getElementById("errorMsg").style.display="block";
     return 0;
   }
 }
 
-    async function fetchPrice(contract) {
-      try {
-        const res = await fetch(`https://api.dexscreener.com/latest/dex/search/?q=${contract}`);
-        const data = await res.json();
-        const pair = data.pairs.find(p => ['USDT', 'USDC'].includes(p.quoteToken.symbol) && p.liquidity.usd > 1000);
-        currentPrice = pair ? parseFloat(pair.priceUsd) : 0;
-      } catch {
-        currentPrice = 0;
-      }
-      document.getElementById("priceUsd").innerText = currentPrice > 0 ? `${currentPrice.toFixed(4)} USD` : "未找到价格";
-    }
-
-function startCountdown(endTimeStr, startTime) {
-  const endTime = new Date(endTimeStr).getTime();
-  const totalTime = endTime - new Date(startTime).getTime();
-  clearInterval(countdownTimer);
-  countdownTimer = setInterval(() => {
-    const now = Date.now();
-    const diff = endTime - now;
-    const inner = document.getElementById("countdownBarInner");
-    const bar = document.getElementById("countdownBar");
-    const countdown = document.getElementById("countdown");
-    if (diff <= 0) {
-      countdown.innerText = "已结束";
-      inner.style.width = "0%";
-      clearInterval(countdownTimer);
-      return;
-    }
-    const h = Math.floor(diff / 3600000);
-    const m = Math.floor((diff % 3600000) / 60000);
-    const s = Math.floor((diff % 60000) / 1000);
-    countdown.innerText = `${h}小时 ${m}分 ${s}秒`;
-    const progress = ((totalTime - diff) / totalTime) * 100;
-    inner.style.width = `${progress.toFixed(1)}%`;
-    bar.style.display = "block";
-  }, 1000);
+async function fetchPrice(contract){
+  try{
+    const res=await fetch(`https://api.dexscreener.com/latest/dex/search/?q=${contract}`);
+    const data=await res.json();
+    const pair=data.pairs.find(p=>["USDT","USDC"].includes(p.quoteToken.symbol)&&p.liquidity.usd>1000);
+    currentPrice=pair?parseFloat(pair.priceUsd):0;
+  }catch{currentPrice=0;}
+  document.getElementById("priceUsd").innerText=currentPrice>0?`${currentPrice.toFixed(4)} USD`:"未找到价格";
 }
 
-async function refreshData() {
-  const btn = document.getElementById("refreshBtn");
-  btn.disabled = true;
-  btn.innerText = "⏳ 加载中...";
+function startCountdown(endStr,startTime){
+  const end=new Date(endStr).getTime();
+  const total=end-new Date(startTime).getTime();
+  clearInterval(countdownTimer);
+  countdownTimer=setInterval(()=>{
+    const now=Date.now(),diff=end-now;
+    const inner=document.getElementById("countdownBarInner");
+    const bar=document.getElementById("countdownBar");
+    const cd=document.getElementById("countdown");
+    if(diff<=0){cd.innerText="已结束";inner.style.width="0%";clearInterval(countdownTimer);return;}
+    const h=Math.floor(diff/3600000),m=Math.floor((diff%3600000)/60000),s=Math.floor((diff%60000)/1000);
+    cd.innerText=`${h}小时 ${m}分 ${s}秒`;
+    inner.style.width=`${(((total-diff)/total)*100).toFixed(1)}%`;
+    bar.style.display="block";
+  },1000);
+}
 
-  const selected = document.getElementById("tokenSelect").value;
-  const token = TOKENS[selected];
-  const note = document.getElementById("obtNote");
-  note.style.display = selected === "OBT" ? "block" : "none";
+async function refreshData(){
+  const btn=document.getElementById("refreshBtn");
+  btn.disabled=true;btn.innerText="⏳ 加载中...";
+
+  const selected=document.getElementById("tokenSelect").value;
+  const token=TOKENS[selected];
+  const note=document.getElementById("obtNote");
+  note.style.display=selected==="OBT"?"block":"none";
 
   await fetchPrice(token.contract);
-  let claimedUsers = token.claimedUsers;
-  if (token.fetchUserCountFromAPI) claimedUsers = await fetchUserCount(token.contract);
 
-  const claimedAmount = claimedUsers * token.perUserAmount;
-  const unclaimed = token.totalSupply - claimedAmount;
-  const claimedPercent = ((claimedAmount / token.totalSupply) * 100).toFixed(2);
-  const adjustedToken = (unclaimed / (claimedUsers || 1)) * 0.7;
-  const adjustedValue = adjustedToken * currentPrice;
+  let claimedUsers=token.claimedUsers||0;
+  if(token.fetchUserCountFromAPI) claimedUsers=await fetchUserCount(token.contract);
 
-  document.getElementById("tokenName").innerText = token.name;
-  document.getElementById("totalSupply").innerText = token.totalSupply.toLocaleString();
-  document.getElementById("claimedUsers").innerText = `${Math.floor(token.totalSupply / token.perUserAmount).toLocaleString()} / ${claimedUsers.toLocaleString()}`;
-  document.getElementById("claimedAmount").innerText = claimedAmount.toLocaleString();
-  document.getElementById("unclaimed").innerText = unclaimed.toLocaleString();
-  document.getElementById("totalValue").innerText = `( ${Math.floor(token.totalSupply * currentPrice).toLocaleString()} USD )`;
-  document.getElementById("unclaimedValue").innerText = `( ${Math.floor(unclaimed * currentPrice).toLocaleString()} USD )`;
-  document.getElementById("claimedValue").innerText = `( ${Math.floor(claimedAmount * currentPrice).toLocaleString()} USD )`;
-  document.getElementById("claimedPercent").innerText = claimedPercent;
-  document.getElementById("progressBar").style.width = `${claimedPercent}%`;
-  document.getElementById("surplusToken").innerText = Math.floor(adjustedToken);
-  document.getElementById("surplusValue").innerText = `${Math.floor(adjustedValue).toLocaleString()} USD`;
+  const claimedAmount=claimedUsers*token.perUserAmount;
+  const unclaimed=token.totalSupply-claimedAmount;
+  const claimedPercent=((claimedAmount/token.totalSupply)*100).toFixed(2);
+  const adjustedToken=(unclaimed/(claimedUsers||1))*0.7;
+  const adjustedValue=adjustedToken*currentPrice;
 
-  const now = new Date();
-  document.getElementById("lastUpdate").innerText = `📅 上次更新于 ${now.toTimeString().slice(0, 8)}`;
+  document.getElementById("tokenName").innerText=token.name;
+  document.getElementById("totalSupply").innerText=token.totalSupply.toLocaleString();
+  document.getElementById("claimedUsers").innerText=`${Math.floor(token.totalSupply/token.perUserAmount).toLocaleString()} / ${claimedUsers.toLocaleString()}`;
+  document.getElementById("claimedAmount").innerText=claimedAmount.toLocaleString();
+  document.getElementById("unclaimed").innerText=unclaimed.toLocaleString();
+  document.getElementById("totalValue").innerText=`( ${Math.floor(token.totalSupply*currentPrice).toLocaleString()} USD )`;
+  document.getElementById("unclaimedValue").innerText=`( ${Math.floor(unclaimed*currentPrice).toLocaleString()} USD )`;
+  document.getElementById("claimedValue").innerText=`( ${Math.floor(claimedAmount*currentPrice).toLocaleString()} USD )`;
+  document.getElementById("claimedPercent").innerText=claimedPercent;
+  document.getElementById("progressBar").style.width=`${claimedPercent}%`;
+  document.getElementById("surplusToken").innerText=Math.floor(adjustedToken);
+  document.getElementById("surplusValue").innerText=`${Math.floor(adjustedValue).toLocaleString()} USD`;
 
-  const deadlineBox = document.getElementById("merlDeadline");
-  const countdownBar = document.getElementById("countdownBar");
-  if (endTimes[selected]) {
-    const timeStr = endTimes[selected].replace("T", " ").replace("+08:00", "");
-    deadlineBox.innerHTML = `${selected} 领取截止时间：${timeStr}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
-    deadlineBox.style.display = "block";
-    countdownBar.style.display = "block";
-    startCountdown(endTimes[selected], now);
-  } else {
-    deadlineBox.style.display = "none";
-    countdownBar.style.display = "none";
-    clearInterval(countdownTimer);
+  const now=new Date();
+  document.getElementById("lastUpdate").innerText=`📅 上次更新于 ${now.toTimeString().slice(0,8)}`;
+
+  const deadlineBox=document.getElementById("merlDeadline");
+  const countdownBar=document.getElementById("countdownBar");
+  if(endTimes[selected]){
+    const t=endTimes[selected].replace("T"," ").replace("+08:00","");
+    deadlineBox.innerHTML=`${selected} 领取截止时间：${t}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
+    deadlineBox.style.display="block";countdownBar.style.display="block";
+    startCountdown(endTimes[selected],now);
+  }else{
+    deadlineBox.style.display="none";countdownBar.style.display="none";clearInterval(countdownTimer);
   }
 
-  btn.disabled = false;
-  btn.innerText = "🔄 刷新数据";
+  btn.disabled=false;btn.innerText="🔄 刷新数据";
 }
 
-window.onload = refreshData;
+window.onload=refreshData;
 </script>
 </body>
 </html>
