@@ -94,11 +94,13 @@
 <script>
 /* ============ 代币配置 ============ */
 const TOKENS={
-  /* ------ 自动接口（RESOLV / HOME） ------ */
-  RESOLV:{name:"RESOLV",contract:"0xda6cef7f667d992a60eb823ab215493aa0c6b360",totalSupply:9_900_000,perUserAmount:400,fetch:true,countField:"sold_count_2"},
-  HOME  :{name:"HOME" ,contract:"0x4bfaa776991e85e5f8b1255461cbbd216cfc714f",totalSupply:123_750_000,perUserAmount:2500,fetch:true,countField:"sold_count_1"},
+  /* ------ 自动接口已停用，改为固定人数 ------ */
+  RESOLV:{name:"RESOLV",contract:"0xda6cef7f667d992a60eb823ab215493aa0c6b360",
+          totalSupply:9_900_000,perUserAmount:400,fetch:false,claimedUsers:23_289},
+  HOME  :{name:"HOME" ,contract:"0x4bfaa776991e85e5f8b1255461cbbd216cfc714f",
+          totalSupply:123_750_000,perUserAmount:2500,fetch:false,claimedUsers:25_330},
 
-  /* ------ 静态空投列表 ------ */
+  /* ------ 其它空投（保持不变） ------ */
   LA   :{name:"LA"  ,contract:"0x389AD4bb96d0D6EE5B6eF0EFAF4b7db0bA2e02a0",totalSupply:4_950_000 ,perUserAmount:160 ,fetch:false,claimedUsers:19_856},
   ASRR :{name:"ASRR",contract:"0xf7626c7ff7b778aaf187d508d056a9398d9545d1",totalSupply:2_986_966 ,perUserAmount:133 ,fetch:false,claimedUsers:13_174},
   SOPH :{name:"SOPH",contract:"0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742",totalSupply:99_743_750,perUserAmount:1250,fetch:false,claimedUsers:52_907},
