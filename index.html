@@ -42,7 +42,8 @@
 <div class="control">
   <button id="refreshBtn">🔄 刷新数据</button>
   <select id="tokenSelect">
-    <option value="ROAM" selected>ROAM</option>
+    <option value="F" selected>F</option>
+    <option value="ROAM">ROAM</option>
     <option value="PUNDIA">PUNDIA</option>
     <option value="TODAY">今日双空投 (RESOLV + HOME)</option>
     <option value="SKATE">SKATE</option>
@@ -96,6 +97,9 @@
 <script>
 /* ============= 代币配置 ============= */
 const TOKENS={
+  /* ---------- 新增 F ---------- */
+  F:{name:"F",contract:"0xc9ccbd76c2353e593cc975f13295e8289d04d3bb",totalSupply:198_000_000,perUserAmount:5000,fetch:false,claimedUsers:5_323},
+
   PUNDIA:{name:"PUNDIA",contract:"0x67aa700ab0110cc52bf7f308fe25068e87a0f581",totalSupply:562_228,perUserAmount:8,fetch:false,claimedUsers:14_172},
   RESOLV:{name:"RESOLV",contract:"0xda6cef7f667d992a60eb823ab215493aa0c6b360",totalSupply:9_900_000,perUserAmount:400,fetch:false,claimedUsers:23_289},
   HOME  :{name:"HOME" ,contract:"0x4bfaa776991e85e5f8b1255461cbbd216cfc714f",totalSupply:123_750_000,perUserAmount:2500,fetch:false,claimedUsers:25_330},
@@ -117,12 +121,13 @@ const TOKENS={
   BDXN :{name:"BDXN",contract:"0x1036b2379f506761f237fba7463857924ef21ce3",totalSupply:29_700_000,perUserAmount:900 ,fetch:false,claimedUsers:19_787},
   AB   :{name:"AB"  ,contract:"0x95034f653d5d161890836ad2b6b8cc49d14e029a",totalSupply:489_177_123,perUserAmount:9882,fetch:false,claimedUsers:24_928},
   OL   :{name:"OL"  ,contract:"0x3f160760535eb715d5809a26cf55408a2d9844c1",totalSupply:61_875_000,perUserAmount:1836,fetch:false,claimedUsers:10_081},
-  /* ---------- 固定领取人数 17,486，关闭接口更新 ---------- */
+  /* ---------- 固定领取人数 17,486 ---------- */
   ROAM :{name:"ROAM",contract:"0x3fefe29da25bea166fb5f6ade7b5976d2b0e586b",totalSupply:14_812_875,perUserAmount:372,fetch:false,claimedUsers:17_486}
 };
 
 /* ============= 截止时间（东八区） ============= */
 const endTimes={
+  F:"2025-06-16T16:00:00+08:00",
   PUNDIA:"2025-06-13T14:00:00+08:00",
   RESOLV:"2025-06-11T21:00:00+08:00", HOME:"2025-06-11T19:00:00+08:00",
   LA:"2025-06-05T20:00:00+08:00", ASRR:"2025-05-31T21:00:00+08:00",
@@ -233,8 +238,9 @@ async function refreshData(){
   const multi=mode==="TODAY", list=multi?["RESOLV","HOME"]:[mode];
   const tbody=document.getElementById("tokenBody");tbody.innerHTML="";
 
-  /* ---- ROAM > PUNDIA > 其它 ---- */
+  /* ---- F > ROAM > PUNDIA > 其它 ---- */
   list.sort((a,b)=>
+    a==="F"?-1:b==="F"?1:
     a==="ROAM"?-1:b==="ROAM"?1:
     a==="PUNDIA"?-1:b==="PUNDIA"?1:0);
 
