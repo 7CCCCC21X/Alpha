@@ -117,7 +117,8 @@ const TOKENS={
   BDXN :{name:"BDXN",contract:"0x1036b2379f506761f237fba7463857924ef21ce3",totalSupply:29_700_000,perUserAmount:900 ,fetch:false,claimedUsers:19_787},
   AB   :{name:"AB"  ,contract:"0x95034f653d5d161890836ad2b6b8cc49d14e029a",totalSupply:489_177_123,perUserAmount:9882,fetch:false,claimedUsers:24_928},
   OL   :{name:"OL"  ,contract:"0x3f160760535eb715d5809a26cf55408a2d9844c1",totalSupply:61_875_000,perUserAmount:1836,fetch:false,claimedUsers:10_081},
-  ROAM :{name:"ROAM",contract:"0x3fefe29da25bea166fb5f6ade7b5976d2b0e586b",totalSupply:14_812_875,perUserAmount:372,fetch:true,countField:"sold_count_1"}
+  /* ---------- 固定领取人数 17,486，关闭接口更新 ---------- */
+  ROAM :{name:"ROAM",contract:"0x3fefe29da25bea166fb5f6ade7b5976d2b0e586b",totalSupply:14_812_875,perUserAmount:372,fetch:false,claimedUsers:17_486}
 };
 
 /* ============= 截止时间（东八区） ============= */
@@ -155,7 +156,7 @@ async function fetchUserCount(addr,field){
 
     /* 数组处理 */
     if(Array.isArray(j)&&j.length){
-      const first=j[0];
+      const	first=j[0];
       if(typeof first==="number") return first;
       if(typeof first?.count==="number") return first.count;
     }
