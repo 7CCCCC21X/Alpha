@@ -3,9 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>币安 Alpha 空投实时查询</title>
+  <title>币安 Alpha 空投实时查询</title>
   <link rel="icon" href="favicon.ico">
   <style>
+    /* =====  基础样式  ===== */
     body{font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:#f9f9f9;color:#333;max-width:900px;margin:40px auto;padding:20px}
     h2,h3{text-align:center;margin-bottom:20px}
     .control,.link-buttons{text-align:center;margin-bottom:20px}
@@ -14,10 +15,10 @@
     select{padding:6px 10px;font-size:15px;margin-left:10px}
     .link-buttons a{display:inline-block;margin:6px;padding:8px 16px;border-radius:6px;border:1px solid #0078d4;background:#fff;color:#0078d4;text-decoration:none;font-size:14px}
     .link-buttons a:hover{background:#0078d4;color:#fff}
-    #errorMsg{color:red;text-align:center;margin-bottom:10px;display:none}
+    #errorMsg{color:#d92c2c;text-align:center;margin-bottom:10px;display:none}
     table{width:100%;border-collapse:collapse;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.05);border-radius:8px}
     th,td{border:1px solid #ddd;padding:12px;text-align:center}
-    th{background:#f2f2f2;font-weight:bold;cursor:pointer}
+    th{background:#f2f2f2;font-weight:bold;cursor:pointer;user-select:none}
     tr:hover{background:#f9fcff}
     .subtext{font-size:13px;color:#777}
     .pv-high{color:#28a745;font-weight:bold}
@@ -32,20 +33,21 @@
     #merlDeadline{color:#e55353;font-size:15px;display:none}
     #countdownBar{width:80%;height:8px;background:#ffe4e4;border-radius:6px;overflow:hidden;margin:6px auto 0;display:none}
     #countdownBarInner{height:100%;width:100%;background:#e55353;transition:width 1s}
-    .dual-countdown{display:flex;gap:20px;justify-content:center;margin-top:20px}
+    .dual-countdown{display:flex;gap:20px;justify-content:center;margin-top:20px;flex-wrap:wrap}
     .cd-card{background:#fff;border:1px solid #ddd;border-radius:6px;padding:10px 16px;box-shadow:0 2px 5px rgba(0,0,0,.05);min-width:120px;text-align:center}
     .cd-card strong{display:block;margin-bottom:4px}.cd-time{color:#e55353;font-weight:bold;font-size:14px}
   </style>
 </head>
 <body>
-<h2>币安 Alpha 空投实时数据展示</h2>
+<h2>币安 Alpha 空投实时数据展示</h2>
 
+<!-- ===== 控件区 ===== -->
 <div class="control">
-  <button id="refreshBtn">🔄 刷新数据</button>
-  <button id="historyBtn">🗂️ 历史总览</button>
+  <button id="refreshBtn">🔄 刷新数据</button>
+  <button id="historyBtn">🗂️ 历史总览</button>
   <select id="tokenSelect">
     <option value="SPK" selected>SPK</option><option value="VELO">VELO</option><option value="F">F</option>
-    <option value="ROAM">ROAM</option><option value="PUNDIA">PUNDIA</option><option value="TODAY">今日双空投 (RESOLV + HOME)</option>
+    <option value="ROAM">ROAM</option><option value="PUNDIA">PUNDIA</option><option value="TODAY">今日双空投 (RESOLV + HOME)</option>
     <option value="SKATE">SKATE</option><option value="LA">LA</option><option value="ASRR">ASRR</option><option value="SOPH">SOPH</option>
     <option value="OBT">OBT</option><option value="MERL">MERL</option><option value="XTER">XTER</option><option value="TGT">TGT</option>
     <option value="Soon">Soon</option><option value="HUMA">HUMA</option><option value="PFVS">PFVS</option><option value="TAIKO">TAIKO</option>
@@ -56,40 +58,43 @@
 </div>
 
 <div class="link-buttons">
-  <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 分发空投地址</a>
-  <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank">📜 Web3 IDO 合约</a>
+  <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 分发空投地址</a>
+  <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank">📜 Web3 IDO 合约</a>
 </div>
 
-<div id="errorMsg">⚠️ 数据加载失败，请稍后重试。</div>
+<div id="errorMsg">⚠️ 数据加载失败，请稍后重试。</div>
 
-<h3>📊 空投发放进度</h3>
+<!-- ===== 进度表 ===== -->
+<h3>📊 空投发放进度</h3>
 <table>
   <thead>
-    <tr><th>代币</th><th>价格</th><th>单号价值</th><th>代币数量</th><th>未领取</th><th>已领取</th><th>达标 / 已领</th></tr>
+    <tr><th>代币</th><th>价格</th><th>单号价值</th><th>代币数量</th><th>未领取</th><th>已领取</th><th>达标 / 已领</th></tr>
   </thead>
   <tbody id="tokenBody"></tbody>
 </table>
 
 <div id="progressBlock">
-  <p>📈 已领取进度：<span id="claimedPercent">-</span>%</p>
+  <p>📈 已领取进度：<span id="claimedPercent">-</span>%</p>
   <div id="progressBarContainer"><div id="progressBar"></div></div>
 </div>
 
-<h3 id="surplusTitle">📌 剩余领取信息</h3>
+<h3 id="surplusTitle">📌 剩余领取信息</h3>
 <div id="surplusBlock">
   <p>剩余可分代币：<span id="surplusToken">-</span></p>
   <p>对应价值：<span id="surplusValue">-</span></p>
-  <p class="discount-note">* 显示为 85% 保守估算</p>
+  <p class="discount-note">* 显示为 85% 保守估算</p>
 </div>
 
-<h3>⏳ 空投领取截止</h3>
+<!-- ===== 截止时间 ===== -->
+<h3>⏳ 空投领取截止</h3>
 <div id="merlDeadline"></div>
 <div id="countdownBar"><div id="countdownBarInner"></div></div>
 
+<!-- 双倒计时卡片 -->
 <div id="dualCountdown" class="dual-countdown" style="display:none;"></div>
 
 <!-- ===== 往期总览 ===== -->
-<h3 style="display:none" id="historyTitle">🗂️ 往期空投总览</h3>
+<h3 style="display:none" id="historyTitle">🗂️ 往期空投总览</h3>
 <div id="historyBlock" style="display:none">
   <table>
     <thead>
@@ -97,7 +102,7 @@
         <th>代币</th><th>结束时间</th><th>价格</th>
         <th data-sort-key="ticket">单号价值</th>
         <th>代币数量</th>
-        <th data-sort-key="usd">USD 金额</th>
+        <th data-sort-key="usd">USD 金额</th>
       </tr>
     </thead>
     <tbody id="historyBody"></tbody>
@@ -105,45 +110,45 @@
   <p id="historyTotal" style="text-align:center;margin-top:10px;color:#555"></p>
 </div>
 
-<div id="lastUpdate">📅 上次更新于 --:--:--</div>
-<div id="author">👤 <a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
+<div id="lastUpdate">📅 上次更新于 --:--:--</div>
+<div id="author">👤 <a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
 
 <script>
-/* ========== 代币配置 ========= */
+/****************   代币配置   ****************/
 const TOKENS={
-  SPK:{name:"SPK",contract:"0xaff2e841851700d1fc101995ee6b81ae21bb87d7",totalSupply:100_000_000,perUserAmount:2000,fetch:false,claimedUsers:39809},
-  VELO:{name:"VELO",contract:"0xf486ad071f3bee968384d2e39e2d8af0fcf6fd46",totalSupply:279_749_989,perUserAmount:5000,fetch:false,claimedUsers:51282},
-  F:{name:"F",contract:"0xc9ccbd76c2353e593cc975f13295e8289d04d3bb",totalSupply:198_000_000,perUserAmount:5000,fetch:false,claimedUsers:32716},
-  PUNDIA:{name:"PUNDIA",contract:"0x67aa700ab0110cc52bf7f308fe25068e87a0f581",totalSupply:562_228,perUserAmount:8,fetch:false,claimedUsers:14172},
-  RESOLV:{name:"RESOLV",contract:"0xda6cef7f667d992a60eb823ab215493aa0c6b360",totalSupply:9_900_000,perUserAmount:400,fetch:false,claimedUsers:23289},
-  HOME:{name:"HOME",contract:"0x4bfaa776991e85e5f8b1255461cbbd216cfc714f",totalSupply:123_750_000,perUserAmount:2500,fetch:false,claimedUsers:25330},
-  LA:{name:"LA",contract:"0x389AD4bb96d0D6EE5B6eF0EFAF4b7db0bA2e02a0",totalSupply:4_950_000,perUserAmount:160,fetch:false,claimedUsers:19856},
-  ASRR:{name:"ASRR",contract:"0xf7626c7ff7b778aaf187d508d056a9398d9545d1",totalSupply:2_986_966,perUserAmount:133,fetch:false,claimedUsers:13174},
-  SOPH:{name:"SOPH",contract:"0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742",totalSupply:99_743_750,perUserAmount:1250,fetch:false,claimedUsers:52907},
-  OBT:{name:"OBT",contract:"0xcef5b397051fc92026249670e918c0ad7b8585e4",totalSupply:179_560_000,perUserAmount:8000,fetch:false,claimedUsers:12872},
-  MERL:{name:"MERL",contract:"0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9",totalSupply:31_364_000,perUserAmount:1000,fetch:false,claimedUsers:17612},
-  XTER:{name:"XTER",contract:"0x103071da56e7cd95b415320760d6a0ddc4da1ca5",totalSupply:9_967_366,perUserAmount:294,fetch:false,claimedUsers:18942},
-  SKATE:{name:"SKATE",contract:"0x61dbbbb552dc893ab3aad09f289f811e67cef285",totalSupply:34_650_000,perUserAmount:800,fetch:false,claimedUsers:10886},
-  TGT:{name:"TGT",contract:"0x6c58e4a513d3a8062e57f41a1442e003af14ebb5",totalSupply:9_962_500,perUserAmount:500,fetch:false,claimedUsers:8321},
-  Soon:{name:"Soon",contract:"0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721",totalSupply:14_964_300,perUserAmount:180,fetch:false,claimedUsers:43566},
-  HUMA:{name:"HUMA",contract:"0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6",totalSupply:59_873_750,perUserAmount:1250,fetch:false,claimedUsers:30664},
-  PFVS:{name:"PFVS",contract:"0x3157874a7508fcf972379d24590c6806522b784f",totalSupply:17_457_125,perUserAmount:875,fetch:false,claimedUsers:7358},
-  TAIKO:{name:"TAIKO",contract:"0x30c60b20c25b2810ca524810467a0c342294fc61",totalSupply:9_900_000,perUserAmount:130,fetch:false,claimedUsers:43338},
-  EDGEN:{name:"EDGEN",contract:"0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562",totalSupply:29_700_000,perUserAmount:1111,fetch:false,claimedUsers:4062},
-  SQD:{name:"SQD",contract:"0xe50e3d1a46070444f44df911359033f2937fcc13",totalSupply:29_781_675,perUserAmount:424,fetch:false,claimedUsers:46356},
-  ZRC:{name:"ZRC",contract:"0xdac991621fd8048d9f235324780abd6c3ad26421",totalSupply:178_200_000,perUserAmount:2666,fetch:false,claimedUsers:24871},
-  BDXN:{name:"BDXN",contract:"0x1036b2379f506761f237fba7463857924ef21ce3",totalSupply:29_700_000,perUserAmount:900,fetch:false,claimedUsers:19787},
-  AB:{name:"AB",contract:"0x95034f653d5d161890836ad2b6b8cc49d14e029a",totalSupply:489_177_123,perUserAmount:9882,fetch:false,claimedUsers:24928},
-  OL:{name:"OL",contract:"0x3f160760535eb715d5809a26cf55408a2d9844c1",totalSupply:61_875_000,perUserAmount:1836,fetch:false,claimedUsers:10081},
-  ROAM:{name:"ROAM",contract:"0x3fefe29da25bea166fb5f6ade7b5976d2b0e586b",totalSupply:14_812_875,perUserAmount:372,fetch:false,claimedUsers:17486},
+  SPK:{name:"SPK",contract:"0xaff2e841851700d1fc101995ee6b81ae21bb87d7",totalSupply:100_000_000,perUserAmount:2000,claimedUsers:39809},
+  VELO:{name:"VELO",contract:"0xf486ad071f3bee968384d2e39e2d8af0fcf6fd46",totalSupply:279_749_989,perUserAmount:5000,claimedUsers:51282},
+  F:{name:"F",contract:"0xc9ccbd76c2353e593cc975f13295e8289d04d3bb",totalSupply:198_000_000,perUserAmount:5000,claimedUsers:32716},
+  PUNDIA:{name:"PUNDIA",contract:"0x67aa700ab0110cc52bf7f308fe25068e87a0f581",totalSupply:562_228,perUserAmount:8,claimedUsers:14172},
+  RESOLV:{name:"RESOLV",contract:"0xda6cef7f667d992a60eb823ab215493aa0c6b360",totalSupply:9_900_000,perUserAmount:400,claimedUsers:23289},
+  HOME:{name:"HOME",contract:"0x4bfaa776991e85e5f8b1255461cbbd216cfc714f",totalSupply:123_750_000,perUserAmount:2500,claimedUsers:25330},
+  LA:{name:"LA",contract:"0x389AD4bb96d0D6EE5B6eF0EFAF4b7db0bA2e02a0",totalSupply:4_950_000,perUserAmount:160,claimedUsers:19856},
+  ASRR:{name:"ASRR",contract:"0xf7626c7ff7b778aaf187d508d056a9398d9545d1",totalSupply:2_986_966,perUserAmount:133,claimedUsers:13174},
+  SOPH:{name:"SOPH",contract:"0x31dba3c96481fde3cd81c2aaf51f2d8bf618c742",totalSupply:99_743_750,perUserAmount:1250,claimedUsers:52907},
+  OBT:{name:"OBT",contract:"0xcef5b397051fc92026249670e918c0ad7b8585e4",totalSupply:179_560_000,perUserAmount:8000,claimedUsers:12872},
+  MERL:{name:"MERL",contract:"0xa0c56a8c0692bd10b3fa8f8ba79cf5332b7107f9",totalSupply:31_364_000,perUserAmount:1000,claimedUsers:17612},
+  XTER:{name:"XTER",contract:"0x103071da56e7cd95b415320760d6a0ddc4da1ca5",totalSupply:9_967_366,perUserAmount:294,claimedUsers:18942},
+  SKATE:{name:"SKATE",contract:"0x61dbbbb552dc893ab3aad09f289f811e67cef285",totalSupply:34_650_000,perUserAmount:800,claimedUsers:10886},
+  TGT:{name:"TGT",contract:"0x6c58e4a513d3a8062e57f41a1442e003af14ebb5",totalSupply:9_962_500,perUserAmount:500,claimedUsers:8321},
+  Soon:{name:"Soon",contract:"0xb9e1fd5a02d3a33b25a14d661414e6ed6954a721",totalSupply:14_964_300,perUserAmount:180,claimedUsers:43566},
+  HUMA:{name:"HUMA",contract:"0x92516e0ddf1ddbf7fab1b79cac26689fdc5ba8e6",totalSupply:59_873_750,perUserAmount:1250,claimedUsers:30664},
+  PFVS:{name:"PFVS",contract:"0x3157874a7508fcf972379d24590c6806522b784f",totalSupply:17_457_125,perUserAmount:875,claimedUsers:7358},
+  TAIKO:{name:"TAIKO",contract:"0x30c60b20c25b2810ca524810467a0c342294fc61",totalSupply:9_900_000,perUserAmount:130,claimedUsers:43338},
+  EDGEN:{name:"EDGEN",contract:"0x0C808F0464C423d5Ea4F4454fcc23B6E2Ae75562",totalSupply:29_700_000,perUserAmount:1111,claimedUsers:4062},
+  SQD:{name:"SQD",contract:"0xe50e3d1a46070444f44df911359033f2937fcc13",totalSupply:29_781_675,perUserAmount:424,claimedUsers:46356},
+  ZRC:{name:"ZRC",contract:"0xdac991621fd8048d9f235324780abd6c3ad26421",totalSupply:178_200_000,perUserAmount:2666,claimedUsers:24871},
+  BDXN:{name:"BDXN",contract:"0x1036b2379f506761f237fba7463857924ef21ce3",totalSupply:29_700_000,perUserAmount:900,claimedUsers:19787},
+  AB:{name:"AB",contract:"0x95034f653d5d161890836ad2b6b8cc49d14e029a",totalSupply:489_177_123,perUserAmount:9882,claimedUsers:24928},
+  OL:{name:"OL",contract:"0x3f160760535eb715d5809a26cf55408a2d9844c1",totalSupply:61_875_000,perUserAmount:1836,claimedUsers:10081},
+  ROAM:{name:"ROAM",contract:"0x3fefe29da25bea166fb5f6ade7b5976d2b0e586b",totalSupply:14_812_875,perUserAmount:372,claimedUsers:17486},
   /* —— 新增 —— */
-  FLY:{name:"FLY",contract:"0x6c9b3a74ae4779da5ca999371ee8950e8db3407f",totalSupply:1_000_000,perUserAmount:88,fetch:false,claimedUsers:4125},
-  SERAPH:{name:"SERAPH",contract:"0xd6b48ccf41a62eb3891e58d0f006b19b01d50cca",totalSupply:12_375_000,perUserAmount:61,fetch:false,claimedUsers:162266},
-  DEGEN:{name:"DEGEN",contract:"0x4ed4e862860bed51a9570b96d89af5e1b0efefed",totalSupply:274_472_074,perUserAmount:13862,fetch:false,claimedUsers:14611},
-  ULTI:{name:"ULTI",contract:"0x0e7779e698052f8fe56c415c3818fcf89de9ac6d",totalSupply:198_000_000,perUserAmount:2543,fetch:false,claimedUsers:58945}
+  FLY:{name:"FLY",contract:"0x6c9b3a74ae4779da5ca999371ee8950e8db3407f",totalSupply:1_000_000,perUserAmount:88,claimedUsers:4125},
+  SERAPH:{name:"SERAPH",contract:"0xd6b48ccf41a62eb3891e58d0f006b19b01d50cca",totalSupply:12_375_000,perUserAmount:61,claimedUsers:162266},
+  DEGEN:{name:"DEGEN",contract:"0x4ed4e862860bed51a9570b96d89af5e1b0efefed",totalSupply:274_472_074,perUserAmount:13862,claimedUsers:14611},
+  ULTI:{name:"ULTI",contract:"0x0e7779e698052f8fe56c415c3818fcf89de9ac6d",totalSupply:198_000_000,perUserAmount:2543,claimedUsers:58945}
 };
 
-/* ========== 截止时间 ========= */
+/****************   截止时间   ****************/
 const endTimes={
   SPK:"2025-06-18T16:00:00+08:00",VELO:"2025-06-17T15:00:00+08:00",F:"2025-06-16T16:00:00+08:00",
   PUNDIA:"2025-06-13T14:00:00+08:00",RESOLV:"2025-06-11T21:00:00+08:00",HOME:"2025-06-11T19:00:00+08:00",
@@ -154,87 +159,104 @@ const endTimes={
   ZRC:"2025-06-04T16:30:00+08:00",BDXN:"2025-06-04T18:00:00+08:00",AB:"2025-06-08T14:00:00+08:00",
   OL:"2025-06-09T14:00:00+08:00",SKATE:"2025-06-10T18:00:00+08:00",ROAM:"2025-06-14T21:00:00+08:00",
   /* 新增 */
-  FLY:"2025-06-07T21:00:00+08:00",
-  SERAPH:"2025-06-10T20:00:00+08:00",
-  DEGEN:"2025-06-15T15:00:00+08:00",
-  ULTI:"2025-06-17T18:00:00+08:00"
+  FLY:"2025-06-07T21:00:00+08:00",SERAPH:"2025-06-10T20:00:00+08:00",DEGEN:"2025-06-15T15:00:00+08:00",ULTI:"2025-06-17T18:00:00+08:00"
 };
 
-/* ========== 工具函数 ========= */
-const usd=n=>`${Math.floor(n).toLocaleString()} USD`;
-const DISCOUNT=0.85;
+/****************   常量 & 工具   ****************/
+const DISCOUNT=0.85;           // 剩余数量折扣系数
+const PRICE_CACHE_TTL=5*60*1e3; // 5 分钟
+const usd=n=>`${Math.floor(n).toLocaleString()} USD`;
 
-const getTokenPrice=async sym=>{
-  if(TOKENS[sym].lastPrice!==undefined)return TOKENS[sym].lastPrice;
+function fetchWithTimeout(url,ms=8e3){
+  return new Promise((res,rej)=>{
+    const ctrl=new AbortController();
+    const id=setTimeout(()=>{ctrl.abort();rej(new Error('timeout'));},ms);
+    fetch(url,{signal:ctrl.signal}).then(r=>{clearTimeout(id);res(r);}).catch(rej);
+  });
+}
+
+/** 价格获取 + sessionStorage 缓存 */
+async function getTokenPrice(sym){
+  const cacheKey=`price_${sym}`;
+  try{
+    const cached=sessionStorage.getItem(cacheKey);
+    if(cached){
+      const {p,ts}=JSON.parse(cached);
+      if(Date.now()-ts<PRICE_CACHE_TTL) return p; // 命中缓存
+    }
+  }catch{/* ignore */}
+
   try{
     const url=`https://api.dexscreener.com/latest/dex/tokens/${TOKENS[sym].contract.toLowerCase()}`;
-    const res=await fetch(url);
-    if(!res.ok)throw 0;
-    const j=await res.json(),ps=j.pairs||[];
-    if(!ps.length)throw 0;
-    const p=ps.filter(x=>["USDT","USDC"].includes(x.quoteToken.symbol)&&(x.liquidity?.usd||0)>5000)
-              .sort((a,b)=>b.liquidity.usd-a.liquidity.usd)[0]||ps[0];
-    return TOKENS[sym].lastPrice=parseFloat(p.priceUsd);
-  }catch{return 0;}
-};
+    const res=await fetchWithTimeout(url,8000);
+    if(!res.ok) throw new Error('req-fail');
+    const j=await res.json();
+    const pairs=j.pairs||[];
+    if(!pairs.length) throw new Error('empty');
+    const p=pairs
+      .filter(x=>["USDT","USDC"].includes(x.quoteToken.symbol)&&(x.liquidity?.usd||0)>5000)
+      .sort((a,b)=>b.liquidity.usd-a.liquidity.usd)[0]||pairs[0];
+    const price=parseFloat(p.priceUsd);
 
-async function fetchUserCount(addr,field){
-  try{
-    const j=await (await fetch(`https://lingquss.vercel.app/api/proxy?address=${addr}`)).json();
-    if(field&&typeof j?.[field]==="number")return j[field];
-    const dk=Object.keys(j).find(k=>typeof j[k]==="number");if(dk)return j[dk];
-    if(Array.isArray(j)&&j.length){const f=j[0];if(typeof f==="number")return f;if(typeof f?.count==="number")return f.count}
-    if(Array.isArray(j?.groups)&&j.groups.length){const g=j.groups[0];if(typeof g==="number")return g;if(typeof g?.count==="number")return g.count;if(typeof g?.users==="number")return g.users}
-    if(Array.isArray(j?.data)&&j.data.length){const d=j.data[0];if(typeof d==="number")return d;if(typeof d?.count==="number")return d.count}
-    return typeof j?.total==="number"?j.total:0;
-  }catch{
-    document.getElementById("errorMsg").style.display="block";
+    // 写缓存
+    try{sessionStorage.setItem(cacheKey,JSON.stringify({p:price,ts:Date.now()}));}catch{/* quota */}
+    return price;
+  }catch(err){
+    console.warn(`${sym} price fetch error`,err);
     return 0;
   }
 }
 
-const fmt=ms=>ms<=0?"已结束":`${Math.floor(ms/3.6e6)}小时 ${Math.floor(ms%3.6e6/6e4)}分 ${Math.floor(ms%6e4/1e3)}秒`;
-let cdTimer,dualTimer;
+const fmtMS=ms=>ms<=0?"已结束":`${Math.floor(ms/3.6e6)}小时 ${Math.floor(ms%3.6e6/6e4)}分 ${Math.floor(ms%6e4/1e3)}秒`;
+
+let cdTimer=null,dualTimer=null;
 function oneCountdown(end){
   clearInterval(cdTimer);
   const E=new Date(end).getTime();
   cdTimer=setInterval(()=>{
     const d=E-Date.now();
-    document.getElementById("countdown").innerText=fmt(d);
+    document.getElementById("countdown").textContent=fmtMS(d);
     const total=Math.max(E-Date.now(),0);
-    document.getElementById("countdownBarInner").style.width=`${Math.max(0,100-d/total*100)}%`;
+    if(total){
+      document.getElementById("countdownBarInner").style.width=`${Math.max(0,100-d/total*100)}%`;
+    }
   },1000);
 }
-function twoCountdown(arr){
+function twoCountdown(list){
   clearInterval(dualTimer);
-  dualTimer=setInterval(()=>arr.forEach(s=>{
-    const d=new Date(endTimes[s]).getTime()-Date.now();
-    document.getElementById(`cd_${s}`).innerText=fmt(d);
-  }),1000);
+  dualTimer=setInterval(()=>{
+    list.forEach(s=>{
+      const d=new Date(endTimes[s]).getTime()-Date.now();
+      const el=document.getElementById(`cd_${s}`);
+      if(el) el.textContent=fmtMS(d);
+    });
+  },1000);
 }
 
-/* ========== 实时刷新 ========== */
+/****************   主刷新流程   ****************/
 async function refreshData(){
   const btn=document.getElementById("refreshBtn");
-  btn.disabled=true;btn.innerText="⏳ 加载...";
+  btn.disabled=true;btn.textContent="⏳ 加载...";
   document.getElementById("errorMsg").style.display="none";
 
+  // 当前模式
   const mode=document.getElementById("tokenSelect").value;
   const multi=mode==="TODAY";
   const list=multi?["RESOLV","HOME"]:[mode];
 
   const tbody=document.getElementById("tokenBody");
-  tbody.innerHTML="";
+  tbody.innerHTML=""; // 清空表格
 
-  list.sort((a,b)=>["SPK","VELO","F","ROAM","PUNDIA"].indexOf(a)-["SPK","VELO","F","ROAM","PUNDIA"].indexOf(b));
+  // 顺序保持 select 原顺序即可
+  let mainToken=mode!=="TODAY"?mode:list[0];
+  let mainStats=null;
 
-  let first=null;
+  // === 请求并渲染 ===
   for(const sym of list){
     const t=TOKENS[sym];
-    let users=t.claimedUsers;
-    if(t.fetch)users=await fetchUserCount(t.contract,t.countField);
-
+    const users=t.claimedUsers; // 所有用户计数均为离线常量，后期如需实时改这里
     const price=await getTokenPrice(sym);
+
     const claimed=users*t.perUserAmount;
     const uncl=t.totalSupply-claimed;
     const perVal=price?t.perUserAmount*price:0;
@@ -243,37 +265,45 @@ async function refreshData(){
     tbody.insertAdjacentHTML("beforeend",`
       <tr>
         <td>${sym}</td>
-        <td>${price?(price<0.01?price.toFixed(5):price.toFixed(4))+" USD":"-"}</td>
-        <td class="${pvCls}">${price?perVal.toFixed(2)+" USD":"-"}</td>
-        <td><div>${t.totalSupply.toLocaleString()}</div><div class="subtext">( ${usd(t.totalSupply*price)} )</div></td>
-        <td><div>${uncl.toLocaleString()}</div><div class="subtext">( ${usd(uncl*price)} )</div></td>
-        <td><div>${claimed.toLocaleString()}</div><div class="subtext">( ${usd(claimed*price)} )</div></td>
-        <td>${Math.floor(t.totalSupply/t.perUserAmount).toLocaleString()} / ${users.toLocaleString()}</td>
+        <td>${price?((price<0.01?price.toFixed(5):price.toFixed(4))+" USD"):"-"}</td>
+        <td class="${pvCls}">${price?perVal.toFixed(2)+" USD":"-"}</td>
+        <td><div>${t.totalSupply.toLocaleString()}</div><div class="subtext">(${price?usd(t.totalSupply*price):"-"})</div></td>
+        <td><div>${uncl.toLocaleString()}</div><div class="subtext">(${price?usd(uncl*price):"-"})</div></td>
+        <td><div>${claimed.toLocaleString()}</div><div class="subtext">(${price?usd(claimed*price):"-"})</div></td>
+        <td>${Math.floor(t.totalSupply/t.perUserAmount).toLocaleString()} / ${users.toLocaleString()}</td>
       </tr>
     `);
-    if(!first)first={sym,price,uncl,users,pct:((claimed/t.totalSupply)*100).toFixed(2)};
+
+    if(sym===mainToken){
+      const pct=((claimed/t.totalSupply)*100).toFixed(2);
+      mainStats={sym,price,uncl,users,pct};
+    }
   }
 
+  // === 顶部/剩余/倒计时 ===
   if(multi){
     ["progressBlock","surplusBlock","surplusTitle","merlDeadline","countdownBar"].forEach(id=>document.getElementById(id).style.display="none");
-    clearInterval(cdTimer);
+
     const dc=document.getElementById("dualCountdown");
     dc.innerHTML=list.map(s=>`<div class="cd-card"><strong>${s}</strong><div class="cd-time" id="cd_${s}">加载中...</div></div>`).join("");
     dc.style.display="flex";
     twoCountdown(list);
   }else{
-    clearInterval(dualTimer);document.getElementById("dualCountdown").style.display="none";
-    const {sym,price,uncl,users,pct}=first;
-    const adj=(uncl/(users||1))*DISCOUNT;
-    document.getElementById("claimedPercent").innerText=pct;
+    clearInterval(dualTimer);
+    document.getElementById("dualCountdown").style.display="none";
+
+    const {sym,price,uncl,users,pct}=mainStats;
+    document.getElementById("claimedPercent").textContent=pct;
     document.getElementById("progressBar").style.width=`${pct}%`;
-    document.getElementById("surplusToken").innerText=Math.floor(adj).toLocaleString();
-    document.getElementById("surplusValue").innerText=usd(adj*price);
+
+    const adj=Math.floor((uncl/Math.max(users,1))*DISCOUNT);
+    document.getElementById("surplusToken").textContent=adj.toLocaleString();
+    document.getElementById("surplusValue").textContent=price?usd(adj*price):"-";
 
     const dl=document.getElementById("merlDeadline");
     if(endTimes[sym]){
-      const t=endTimes[sym].replace("T"," ").replace("+08:00","");
-      dl.innerHTML=`${sym} 截止：${t}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
+      const t=endTimes[sym].replace("T"," ").replace("+08:00","");
+      dl.innerHTML=`${sym} 截止：${t}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
       dl.style.display="block";
       document.getElementById("countdownBar").style.display="block";
       oneCountdown(endTimes[sym]);
@@ -282,49 +312,54 @@ async function refreshData(){
       document.getElementById("countdownBar").style.display="none";
       clearInterval(cdTimer);
     }
+
     ["progressBlock","surplusBlock","surplusTitle"].forEach(id=>document.getElementById(id).style.display="block");
   }
 
-  document.getElementById("lastUpdate").innerText=`📅 上次更新于 ${new Date().toTimeString().slice(0,8)}`;
-  btn.disabled=false;btn.innerText="🔄 刷新数据";
+  document.getElementById("lastUpdate").textContent=`📅 上次更新于 ${new Date().toTimeString().slice(0,8)}`;
+  btn.disabled=false;btn.textContent="🔄 刷新数据";
 }
 
-/* ========== 历史总览 ========== */
+/*****************************************************************************************
+ *                                 历史总览 / 排序                                       *
+ *****************************************************************************************/
 let historyBuilt=false,historyVisible=false;
 async function buildHistory(){
   const body=document.getElementById("historyBody");
   body.innerHTML="<tr><td colspan='6'>加载中...</td></tr>";
 
-  const now=Date.now();let rows=[],sum=0,sumTicket=0;
+  const now=Date.now();
+  let rows=[],sum=0,sumTicket=0;
   for(const sym in TOKENS){
     const end=endTimes[sym]?new Date(endTimes[sym]).getTime():0;
-    if(!end||end>now)continue;
+    if(!end||end>now) continue; // 仍在进行的跳过
+
     const price=await getTokenPrice(sym);
     const ticket=price*TOKENS[sym].perUserAmount;
     const totalUsd=price*TOKENS[sym].totalSupply;
-    sum+=totalUsd;sumTicket+=ticket;
+    sum+=totalUsd; sumTicket+=ticket;
     rows.push({sym,end,price,ticket,totalUsd,totalQty:TOKENS[sym].totalSupply});
   }
   rows.sort((a,b)=>b.end-a.end);
+
   body.innerHTML="";
   rows.forEach(r=>{
-    body.insertAdjacentHTML("beforeend",`
-      <tr>
+    body.insertAdjacentHTML("beforeend",
+      `<tr>
         <td>${r.sym}</td>
         <td>${new Date(r.end).toLocaleString("zh-CN",{hour12:false})}</td>
-        <td>${r.price?(r.price<0.01?r.price.toFixed(5):r.price.toFixed(4))+" USD":"-"}</td>
+        <td>${r.price?(r.price<0.01?r.price.toFixed(5):r.price.toFixed(4))+" USD":"-"}</td>
         <td data-val="${r.ticket}">${usd(r.ticket)}</td>
         <td>${r.totalQty.toLocaleString()}</td>
         <td data-val="${r.totalUsd}">${usd(r.totalUsd)}</td>
       </tr>`);
   });
 
-  const avgDrop=sum/rows.length||0;
-  const avgTicket=sumTicket/rows.length||0;
+  const avgDrop=sum/rows.length||0,avgTicket=sumTicket/rows.length||0;
   document.getElementById("historyTotal").innerHTML=
-    `🎯 往期总空投金额合计：<strong>${usd(sum)}</strong> | `+
-    `📊 平均每次空投金额：<strong>${usd(avgDrop)}</strong> | `+
-    `🎫 平均每期单号价值：<strong>${usd(avgTicket)}</strong>`;
+    `🎯 往期总空投金额合计：<strong>${usd(sum)}</strong> | `+
+    `📊 平均每次空投金额：<strong>${usd(avgDrop)}</strong> | `+
+    `🎫 平均每期单号价值：<strong>${usd(avgTicket)}</strong>`;
 
   enableSort();
   historyBuilt=true;
@@ -335,8 +370,10 @@ function enableSort(){
     th.onclick=()=>{
       const idx=[...th.parentNode.children].indexOf(th);
       const asc=!th.classList.contains("sort-asc");
+      // 清数
       th.parentNode.querySelectorAll('th').forEach(h=>h.classList.remove("sort-asc","sort-desc"));
       th.classList.add(asc?"sort-asc":"sort-desc");
+
       const tbody=document.getElementById("historyBody");
       [...tbody.rows].sort((a,b)=>{
         const av=parseFloat(a.children[idx].dataset.val||0);
@@ -351,16 +388,26 @@ function toggleHistory(){
   historyVisible=!historyVisible;
   document.getElementById("historyBlock").style.display=historyVisible?"block":"none";
   document.getElementById("historyTitle").style.display=historyVisible?"block":"none";
-  document.getElementById("historyBtn").innerText=historyVisible?"🗂️ 收起历史":"🗂️ 历史总览";
-  if(historyVisible&&!historyBuilt)buildHistory();
+  document.getElementById("historyBtn").textContent=historyVisible?"🗂️ 收起历史":"🗂️ 历史总览";
+  if(historyVisible&&!historyBuilt) buildHistory();
 }
 
-/* ========== 初始化 ========== */
-document.getElementById("refreshBtn").onclick=refreshData;
-document.getElementById("tokenSelect").onchange=refreshData;
-document.getElementById("historyBtn").onclick=toggleHistory;
-refreshData();
-setInterval(refreshData,60_000);
+/*****************************************************************************************
+ *                                     初始化                                            *
+ *****************************************************************************************/
+function init(){
+  document.getElementById("refreshBtn").onclick=refreshData;
+  document.getElementById("tokenSelect").onchange=refreshData;
+  document.getElementById("historyBtn").onclick=toggleHistory;
+
+  refreshData();
+
+  // 保证只有一个定时器
+  if(window._refreshTimer) clearInterval(window._refreshTimer);
+  window._refreshTimer=setInterval(refreshData,60_000);
+}
+
+window.addEventListener('DOMContentLoaded',init);
 </script>
 </body>
 </html>
