@@ -110,7 +110,8 @@
 <script>
 /* ============= 代币配置 ============= */
 const TOKENS = {
-  SPK :{name:"SPK" ,contract:"0xaff2e841851700d1fc101995ee6b81ae21bb87d7",totalSupply:100_000_000,perUserAmount:2000,fetch:true ,claimedUsers:0},
+  /* 固定人数 39809，fetch 关闭 */
+  SPK :{name:"SPK" ,contract:"0xaff2e841851700d1fc101995ee6b81ae21bb87d7",totalSupply:100_000_000,perUserAmount:2000,fetch:false,claimedUsers:39809},
   VELO:{name:"VELO",contract:"0xf486ad071f3bee968384d2e39e2d8af0fcf6fd46",totalSupply:279_749_989,perUserAmount:5000,fetch:false,claimedUsers:51282},
   F   :{name:"F"   ,contract:"0xc9ccbd76c2353e593cc975f13295e8289d04d3bb",totalSupply:198_000_000,perUserAmount:5000,fetch:false,claimedUsers:32716},
   PUNDIA:{name:"PUNDIA",contract:"0x67aa700ab0110cc52bf7f308fe25068e87a0f581",totalSupply:562_228,perUserAmount:8,fetch:false,claimedUsers:14172},
