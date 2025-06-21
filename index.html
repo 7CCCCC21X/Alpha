@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>币安 Alpha 空投实时查询</title>
+  <title>币安 Alpha 空投实时查询</title>
   <link rel="icon" href="favicon.ico">
   <style>
     /* =====  基础样式  ===== */
@@ -39,54 +39,55 @@
   </style>
 </head>
 <body>
-<h2>币安 Alpha 空投实时数据展示</h2>
+<h2>币安 Alpha 空投实时数据展示</h2>
 
 <!-- ===== 控件区 ===== -->
 <div class="control">
-  <button id="refreshBtn">🔄 刷新数据</button>
-  <button id="historyBtn">🗂️ 历史总览</button>
+  <button id="refreshBtn">🔄 刷新数据</button>
+  <button id="historyBtn">🗂️ 历史总览</button>
   <select id="tokenSelect">
-    <option value="SPK" selected>SPK</option><option value="VELO">VELO</option><option value="F">F</option>
-    <option value="ROAM">ROAM</option><option value="PUNDIA">PUNDIA</option><option value="TODAY">今日双空投 (RESOLV + HOME)</option>
+    <option value="SPK">SPK</option><option value="VELO">VELO</option><option value="F">F</option>
+    <option value="ROAM">ROAM</option><option value="PUNDIA">PUNDIA</option><option value="TODAY">今日双空投 (RESOLV + HOME)</option>
     <option value="SKATE">SKATE</option><option value="LA">LA</option><option value="ASRR">ASRR</option><option value="SOPH">SOPH</option>
     <option value="OBT">OBT</option><option value="MERL">MERL</option><option value="XTER">XTER</option><option value="TGT">TGT</option>
     <option value="Soon">Soon</option><option value="HUMA">HUMA</option><option value="PFVS">PFVS</option><option value="TAIKO">TAIKO</option>
     <option value="EDGEN">EDGEN</option><option value="SQD">SQD</option><option value="ZRC">ZRC</option><option value="BDXN">BDXN</option>
     <option value="AB">AB</option><option value="OL">OL</option><option value="RESOLV">RESOLV</option><option value="HOME">HOME</option>
     <option value="FLY">FLY</option><option value="SERAPH">SERAPH</option><option value="DEGEN">DEGEN</option><option value="ULTI">ULTI</option>
+    <option value="MAT">MAT</option><option value="AVAIL" selected>AVAIL</option>
   </select>
 </div>
 
 <div class="link-buttons">
-  <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 分发空投地址</a>
-  <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank">📜 Web3 IDO 合约</a>
+  <a href="https://debank.com/profile/0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db" target="_blank">📦 分发空投地址</a>
+  <a href="https://bscscan.com/address/0x497f4521d79925989ae304c7caf84ed57988e88a" target="_blank">📜 Web3 IDO 合约</a>
 </div>
 
-<div id="errorMsg">⚠️ 数据加载失败，请稍后重试。</div>
+<div id="errorMsg">⚠️ 数据加载失败，请稍后重试。</div>
 
 <!-- ===== 进度表 ===== -->
-<h3>📊 空投发放进度</h3>
+<h3>📊 空投发放进度</h3>
 <table>
   <thead>
-    <tr><th>代币</th><th>价格</th><th>单号价值</th><th>代币数量</th><th>未领取</th><th>已领取</th><th>达标 / 已领</th></tr>
+    <tr><th>代币</th><th>价格</th><th>单号价值</th><th>代币数量</th><th>未领取</th><th>已领取</th><th>达标 / 已领</th></tr>
   </thead>
   <tbody id="tokenBody"></tbody>
 </table>
 
 <div id="progressBlock">
-  <p>📈 已领取进度：<span id="claimedPercent">-</span>%</p>
+  <p>📈 已领取进度：<span id="claimedPercent">-</span>%</p>
   <div id="progressBarContainer"><div id="progressBar"></div></div>
 </div>
 
-<h3 id="surplusTitle">📌 剩余领取信息</h3>
+<h3 id="surplusTitle">📌 剩余领取信息</h3>
 <div id="surplusBlock">
   <p>剩余可分代币：<span id="surplusToken">-</span></p>
   <p>对应价值：<span id="surplusValue">-</span></p>
-  <p class="discount-note">* 显示为 85% 保守估算</p>
+  <p class="discount-note">* 显示为 85% 保守估算</p>
 </div>
 
 <!-- ===== 截止时间 ===== -->
-<h3>⏳ 空投领取截止</h3>
+<h3>⏳ 空投领取截止</h3>
 <div id="merlDeadline"></div>
 <div id="countdownBar"><div id="countdownBarInner"></div></div>
 
@@ -94,7 +95,7 @@
 <div id="dualCountdown" class="dual-countdown" style="display:none;"></div>
 
 <!-- ===== 往期总览 ===== -->
-<h3 style="display:none" id="historyTitle">🗂️ 往期空投总览</h3>
+<h3 style="display:none" id="historyTitle">🗂️ 往期空投总览</h3>
 <div id="historyBlock" style="display:none">
   <table>
     <thead>
@@ -102,7 +103,7 @@
         <th>代币</th><th>结束时间</th><th>价格</th>
         <th data-sort-key="ticket">单号价值</th>
         <th>代币数量</th>
-        <th data-sort-key="usd">USD 金额</th>
+        <th data-sort-key="usd">USD 金额</th>
       </tr>
     </thead>
     <tbody id="historyBody"></tbody>
@@ -110,11 +111,11 @@
   <p id="historyTotal" style="text-align:center;margin-top:10px;color:#555"></p>
 </div>
 
-<div id="lastUpdate">📅 上次更新于 --:--:--</div>
-<div id="author">👤 <a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
+<div id="lastUpdate">📅 上次更新于 --:--:--</div>
+<div id="author">👤 <a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
 
 <script>
-/****************   代币配置   ****************/
+/****************  代币配置  ****************/
 const TOKENS={
   SPK:{name:"SPK",contract:"0xaff2e841851700d1fc101995ee6b81ae21bb87d7",totalSupply:100_000_000,perUserAmount:2000,claimedUsers:39809},
   VELO:{name:"VELO",contract:"0xf486ad071f3bee968384d2e39e2d8af0fcf6fd46",totalSupply:279_749_989,perUserAmount:5000,claimedUsers:51282},
@@ -145,10 +146,13 @@ const TOKENS={
   FLY:{name:"FLY",contract:"0x6c9b3a74ae4779da5ca999371ee8950e8db3407f",totalSupply:1_000_000,perUserAmount:88,claimedUsers:4125},
   SERAPH:{name:"SERAPH",contract:"0xd6b48ccf41a62eb3891e58d0f006b19b01d50cca",totalSupply:12_375_000,perUserAmount:61,claimedUsers:162266},
   DEGEN:{name:"DEGEN",contract:"0x4ed4e862860bed51a9570b96d89af5e1b0efefed",totalSupply:274_472_074,perUserAmount:13862,claimedUsers:14611},
-  ULTI:{name:"ULTI",contract:"0x0e7779e698052f8fe56c415c3818fcf89de9ac6d",totalSupply:198_000_000,perUserAmount:2543,claimedUsers:58945}
+  ULTI:{name:"ULTI",contract:"0x0e7779e698052f8fe56c415c3818fcf89de9ac6d",totalSupply:198_000_000,perUserAmount:2543,claimedUsers:58945},
+  /* —— 你新添加的代币 —— */
+  MAT:{name:"MAT",contract:"0xfe2dd2d57a05f89438f3aec94eafa4070396bab0",totalSupply:1_120_000,perUserAmount:16,claimedUsers:28109},
+  AVAIL:{name:"AVAIL",contract:"0x39702843a6733932ec7ce0dde404e5a6dbd8c989",totalSupply:159_753_300,perUserAmount:2667,claimedUsers:0}
 };
 
-/****************   截止时间   ****************/
+/****************  截止时间  ****************/
 const endTimes={
   SPK:"2025-06-18T16:00:00+08:00",VELO:"2025-06-17T15:00:00+08:00",F:"2025-06-16T16:00:00+08:00",
   PUNDIA:"2025-06-13T14:00:00+08:00",RESOLV:"2025-06-11T21:00:00+08:00",HOME:"2025-06-11T19:00:00+08:00",
@@ -158,56 +162,65 @@ const endTimes={
   TAIKO:"2025-06-01T14:00:00+08:00",EDGEN:"2025-06-03T18:30:00+08:00",SQD:"2025-06-03T21:00:00+08:00",
   ZRC:"2025-06-04T16:30:00+08:00",BDXN:"2025-06-04T18:00:00+08:00",AB:"2025-06-08T14:00:00+08:00",
   OL:"2025-06-09T14:00:00+08:00",SKATE:"2025-06-10T18:00:00+08:00",ROAM:"2025-06-14T21:00:00+08:00",
-  /* 新增 */
-  FLY:"2025-06-07T21:00:00+08:00",SERAPH:"2025-06-10T20:00:00+08:00",DEGEN:"2025-06-15T15:00:00+08:00",ULTI:"2025-06-17T18:00:00+08:00"
+  FLY:"2025-06-07T21:00:00+08:00",SERAPH:"2025-06-10T20:00:00+08:00",DEGEN:"2025-06-15T15:00:00+08:00",ULTI:"2025-06-17T18:00:00+08:00",
+  MAT:"2025-06-20T20:00:00+08:00",AVAIL:"2025-06-21T15:00:00+08:00"
 };
 
-/****************   常量 & 工具   ****************/
-const DISCOUNT=0.85;           // 剩余数量折扣系数
-const PRICE_CACHE_TTL=5*60*1e3; // 5 分钟
-const usd=n=>`${Math.floor(n).toLocaleString()} USD`;
+/****************  常量 & 工具  ****************/
+const DISCOUNT=0.85;
+const PRICE_CACHE_TTL=5*60*1e3;
+const usd=n=>`${Math.floor(n).toLocaleString()} USD`;
 
 function fetchWithTimeout(url,ms=8e3){
   return new Promise((res,rej)=>{
     const ctrl=new AbortController();
-    const id=setTimeout(()=>{ctrl.abort();rej(new Error('timeout'));},ms);
-    fetch(url,{signal:ctrl.signal}).then(r=>{clearTimeout(id);res(r);}).catch(rej);
+    const t=setTimeout(()=>{ctrl.abort();rej(new Error("timeout"));},ms);
+    fetch(url,{signal:ctrl.signal}).then(r=>{clearTimeout(t);res(r);}).catch(rej);
   });
 }
 
-/** 价格获取 + sessionStorage 缓存 */
+/** 价格获取 + 缓存 */
 async function getTokenPrice(sym){
   const cacheKey=`price_${sym}`;
   try{
     const cached=sessionStorage.getItem(cacheKey);
     if(cached){
       const {p,ts}=JSON.parse(cached);
-      if(Date.now()-ts<PRICE_CACHE_TTL) return p; // 命中缓存
+      if(Date.now()-ts<PRICE_CACHE_TTL) return p;
     }
-  }catch{/* ignore */}
-
+  }catch{}
   try{
     const url=`https://api.dexscreener.com/latest/dex/tokens/${TOKENS[sym].contract.toLowerCase()}`;
     const res=await fetchWithTimeout(url,8000);
-    if(!res.ok) throw new Error('req-fail');
+    if(!res.ok) throw new Error("req-fail");
     const j=await res.json();
     const pairs=j.pairs||[];
-    if(!pairs.length) throw new Error('empty');
-    const p=pairs
-      .filter(x=>["USDT","USDC"].includes(x.quoteToken.symbol)&&(x.liquidity?.usd||0)>5000)
-      .sort((a,b)=>b.liquidity.usd-a.liquidity.usd)[0]||pairs[0];
+    if(!pairs.length) throw new Error("empty");
+    const p=pairs.filter(x=>["USDT","USDC"].includes(x.quoteToken.symbol)&&(x.liquidity?.usd||0)>5000)
+                 .sort((a,b)=>b.liquidity.usd-a.liquidity.usd)[0]||pairs[0];
     const price=parseFloat(p.priceUsd);
-
-    // 写缓存
-    try{sessionStorage.setItem(cacheKey,JSON.stringify({p:price,ts:Date.now()}));}catch{/* quota */}
+    sessionStorage.setItem(cacheKey,JSON.stringify({p:price,ts:Date.now()}));
     return price;
-  }catch(err){
-    console.warn(`${sym} price fetch error`,err);
+  }catch(e){
+    console.warn(sym,"price fetch error",e);
     return 0;
   }
 }
 
-const fmtMS=ms=>ms<=0?"已结束":`${Math.floor(ms/3.6e6)}小时 ${Math.floor(ms%3.6e6/6e4)}分 ${Math.floor(ms%6e4/1e3)}秒`;
+/** 实时获取 AVAIL 领取人数 */
+async function getAvailClaimedUsers(){
+  try{
+    const res=await fetchWithTimeout("https://lingqu.vercel.app/api/proxy",8000);
+    if(!res.ok) throw new Error("req-fail");
+    const j=await res.json();
+    return j.sold_count_1??0;
+  }catch(e){
+    console.warn("AVAIL claimedUsers fetch error",e);
+    return 0;
+  }
+}
+
+const fmtMS=ms=>ms<=0?"已结束":`${Math.floor(ms/3.6e6)}小时 ${Math.floor(ms%3.6e6/6e4)}分 ${Math.floor(ms%6e4/1e3)}秒`;
 
 let cdTimer=null,dualTimer=null;
 function oneCountdown(end){
@@ -233,30 +246,28 @@ function twoCountdown(list){
   },1000);
 }
 
-/****************   主刷新流程   ****************/
+/****************  主刷新流程  ****************/
 async function refreshData(){
   const btn=document.getElementById("refreshBtn");
-  btn.disabled=true;btn.textContent="⏳ 加载...";
+  btn.disabled=true;btn.textContent="⏳ 加载...";
   document.getElementById("errorMsg").style.display="none";
 
-  // 当前模式
   const mode=document.getElementById("tokenSelect").value;
   const multi=mode==="TODAY";
   const list=multi?["RESOLV","HOME"]:[mode];
 
   const tbody=document.getElementById("tokenBody");
-  tbody.innerHTML=""; // 清空表格
+  tbody.innerHTML="";
 
-  // 顺序保持 select 原顺序即可
   let mainToken=mode!=="TODAY"?mode:list[0];
   let mainStats=null;
 
-  // === 请求并渲染 ===
   for(const sym of list){
     const t=TOKENS[sym];
-    const users=t.claimedUsers; // 所有用户计数均为离线常量，后期如需实时改这里
-    const price=await getTokenPrice(sym);
+    let users=t.claimedUsers;
+    if(sym==="AVAIL") users=await getAvailClaimedUsers();
 
+    const price=await getTokenPrice(sym);
     const claimed=users*t.perUserAmount;
     const uncl=t.totalSupply-claimed;
     const perVal=price?t.perUserAmount*price:0;
@@ -265,12 +276,12 @@ async function refreshData(){
     tbody.insertAdjacentHTML("beforeend",`
       <tr>
         <td>${sym}</td>
-        <td>${price?((price<0.01?price.toFixed(5):price.toFixed(4))+" USD"):"-"}</td>
-        <td class="${pvCls}">${price?perVal.toFixed(2)+" USD":"-"}</td>
+        <td>${price?((price<0.01?price.toFixed(5):price.toFixed(4))+" USD"):"-"}</td>
+        <td class="${pvCls}">${price?perVal.toFixed(2)+" USD":"-"}</td>
         <td><div>${t.totalSupply.toLocaleString()}</div><div class="subtext">(${price?usd(t.totalSupply*price):"-"})</div></td>
         <td><div>${uncl.toLocaleString()}</div><div class="subtext">(${price?usd(uncl*price):"-"})</div></td>
         <td><div>${claimed.toLocaleString()}</div><div class="subtext">(${price?usd(claimed*price):"-"})</div></td>
-        <td>${Math.floor(t.totalSupply/t.perUserAmount).toLocaleString()} / ${users.toLocaleString()}</td>
+        <td>${Math.floor(t.totalSupply/t.perUserAmount).toLocaleString()} / ${users.toLocaleString()}</td>
       </tr>
     `);
 
@@ -280,10 +291,8 @@ async function refreshData(){
     }
   }
 
-  // === 顶部/剩余/倒计时 ===
   if(multi){
     ["progressBlock","surplusBlock","surplusTitle","merlDeadline","countdownBar"].forEach(id=>document.getElementById(id).style.display="none");
-
     const dc=document.getElementById("dualCountdown");
     dc.innerHTML=list.map(s=>`<div class="cd-card"><strong>${s}</strong><div class="cd-time" id="cd_${s}">加载中...</div></div>`).join("");
     dc.style.display="flex";
@@ -291,7 +300,6 @@ async function refreshData(){
   }else{
     clearInterval(dualTimer);
     document.getElementById("dualCountdown").style.display="none";
-
     const {sym,price,uncl,users,pct}=mainStats;
     document.getElementById("claimedPercent").textContent=pct;
     document.getElementById("progressBar").style.width=`${pct}%`;
@@ -302,26 +310,23 @@ async function refreshData(){
 
     const dl=document.getElementById("merlDeadline");
     if(endTimes[sym]){
-      const t=endTimes[sym].replace("T"," ").replace("+08:00","");
-      dl.innerHTML=`${sym} 截止：${t}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
+      const t=endTimes[sym].replace("T"," ").replace("+08:00","");
+      dl.innerHTML=`${sym} 截止：${t}（东八区）<br>剩余时间：<span id="countdown">加载中...</span>`;
       dl.style.display="block";
       document.getElementById("countdownBar").style.display="block";
       oneCountdown(endTimes[sym]);
     }else{
-      dl.style.display="none";
-      document.getElementById("countdownBar").style.display="none";
-      clearInterval(cdTimer);
+      dl.style.display="none";document.getElementById("countdownBar").style.display="none";clearInterval(cdTimer);
     }
-
     ["progressBlock","surplusBlock","surplusTitle"].forEach(id=>document.getElementById(id).style.display="block");
   }
 
-  document.getElementById("lastUpdate").textContent=`📅 上次更新于 ${new Date().toTimeString().slice(0,8)}`;
-  btn.disabled=false;btn.textContent="🔄 刷新数据";
+  document.getElementById("lastUpdate").textContent=`📅 上次更新于 ${new Date().toTimeString().slice(0,8)}`;
+  btn.disabled=false;btn.textContent="🔄 刷新数据";
 }
 
 /*****************************************************************************************
- *                                 历史总览 / 排序                                       *
+ * 历史总览 / 排序
  *****************************************************************************************/
 let historyBuilt=false,historyVisible=false;
 async function buildHistory(){
@@ -332,23 +337,22 @@ async function buildHistory(){
   let rows=[],sum=0,sumTicket=0;
   for(const sym in TOKENS){
     const end=endTimes[sym]?new Date(endTimes[sym]).getTime():0;
-    if(!end||end>now) continue; // 仍在进行的跳过
-
+    if(!end||end>now) continue;
     const price=await getTokenPrice(sym);
     const ticket=price*TOKENS[sym].perUserAmount;
     const totalUsd=price*TOKENS[sym].totalSupply;
-    sum+=totalUsd; sumTicket+=ticket;
+    sum+=totalUsd;sumTicket+=ticket;
     rows.push({sym,end,price,ticket,totalUsd,totalQty:TOKENS[sym].totalSupply});
   }
   rows.sort((a,b)=>b.end-a.end);
 
   body.innerHTML="";
   rows.forEach(r=>{
-    body.insertAdjacentHTML("beforeend",
-      `<tr>
+    body.insertAdjacentHTML("beforeend",`
+      <tr>
         <td>${r.sym}</td>
         <td>${new Date(r.end).toLocaleString("zh-CN",{hour12:false})}</td>
-        <td>${r.price?(r.price<0.01?r.price.toFixed(5):r.price.toFixed(4))+" USD":"-"}</td>
+        <td>${r.price?(r.price<0.01?r.price.toFixed(5):r.price.toFixed(4))+" USD":"-"}</td>
         <td data-val="${r.ticket}">${usd(r.ticket)}</td>
         <td>${r.totalQty.toLocaleString()}</td>
         <td data-val="${r.totalUsd}">${usd(r.totalUsd)}</td>
@@ -357,12 +361,10 @@ async function buildHistory(){
 
   const avgDrop=sum/rows.length||0,avgTicket=sumTicket/rows.length||0;
   document.getElementById("historyTotal").innerHTML=
-    `🎯 往期总空投金额合计：<strong>${usd(sum)}</strong> | `+
-    `📊 平均每次空投金额：<strong>${usd(avgDrop)}</strong> | `+
-    `🎫 平均每期单号价值：<strong>${usd(avgTicket)}</strong>`;
-
-  enableSort();
-  historyBuilt=true;
+    `🎯 往期总空投金额合计：<strong>${usd(sum)}</strong> | `+
+    `📊 平均每次空投金额：<strong>${usd(avgDrop)}</strong> | `+
+    `🎫 平均每期单号价值：<strong>${usd(avgTicket)}</strong>`;
+  enableSort();historyBuilt=true;
 }
 
 function enableSort(){
@@ -370,7 +372,6 @@ function enableSort(){
     th.onclick=()=>{
       const idx=[...th.parentNode.children].indexOf(th);
       const asc=!th.classList.contains("sort-asc");
-      // 清数
       th.parentNode.querySelectorAll('th').forEach(h=>h.classList.remove("sort-asc","sort-desc"));
       th.classList.add(asc?"sort-asc":"sort-desc");
 
@@ -388,26 +389,22 @@ function toggleHistory(){
   historyVisible=!historyVisible;
   document.getElementById("historyBlock").style.display=historyVisible?"block":"none";
   document.getElementById("historyTitle").style.display=historyVisible?"block":"none";
-  document.getElementById("historyBtn").textContent=historyVisible?"🗂️ 收起历史":"🗂️ 历史总览";
+  document.getElementById("historyBtn").textContent=historyVisible?"🗂️ 收起历史":"🗂️ 历史总览";
   if(historyVisible&&!historyBuilt) buildHistory();
 }
 
 /*****************************************************************************************
- *                                     初始化                                            *
+ * 初始化
  *****************************************************************************************/
 function init(){
   document.getElementById("refreshBtn").onclick=refreshData;
   document.getElementById("tokenSelect").onchange=refreshData;
   document.getElementById("historyBtn").onclick=toggleHistory;
-
   refreshData();
-
-  // 保证只有一个定时器
   if(window._refreshTimer) clearInterval(window._refreshTimer);
   window._refreshTimer=setInterval(refreshData,60_000);
 }
-
-window.addEventListener('DOMContentLoaded',init);
+window.addEventListener("DOMContentLoaded",init);
 </script>
 </body>
 </html>
