@@ -54,7 +54,8 @@
   <button id="refreshBtn">🔄 刷新数据</button>
   <button id="historyBtn">🗂️ 历史总览</button>
   <select id="tokenSelect">
-    <option value="BRIC" selected>BRIC</option>
+    <option value="BULLA" selected>BULLA</option>
+    <option value="BRIC">BRIC</option>
     <option value="SPK">SPK</option><option value="VELO">VELO</option><option value="F">F</option>
     <option value="ROAM">ROAM</option><option value="PUNDIA">PUNDIA</option>
     <option value="TODAY">今日双空投 (RESOLV + HOME)</option>
@@ -130,6 +131,8 @@
 <script>
 /****************  代币配置  ****************/
 const TOKENS = {
+  BULLA:{name:"BULLA",contract:"0x595e21b20e78674f8a64c1566a20b2b316bc3511",
+        totalSupply:29925000,perUserAmount:750,claimedUsers:4499},
   BRIC:{name:"BRIC",contract:"0xb40f2e5291c3db45abb0ca8df76f1c21e9f112a9",
         totalSupply:22500000,perUserAmount:900,claimedUsers:2834},
   SPK:{name:"SPK",contract:"0xaff2e841851700d1fc101995ee6b81ae21bb87d7",
@@ -198,6 +201,7 @@ const TOKENS = {
 
 /****************  截止时间  ****************/
 const endTimes = {
+  BULLA:"2025-06-23T18:00:00+08:00",
   BRIC:"2025-06-22T18:00:00+08:00",
   SPK:"2025-06-18T16:00:00+08:00",VELO:"2025-06-17T15:00:00+08:00",
   F:"2025-06-16T16:00:00+08:00",PUNDIA:"2025-06-13T14:00:00+08:00",
@@ -308,7 +312,7 @@ async function refreshData() {
 
   for (const sym of list) {
     const t = TOKENS[sym];
-    const users = t.claimedUsers; // AVAIL 固定，不再拉接口
+    const users = t.claimedUsers; // AVAIL/BULLA 固定，不再拉接口
     const price = await getTokenPrice(sym);
     const claimed = users * t.perUserAmount;
     const uncl = t.totalSupply - claimed;
