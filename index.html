@@ -43,7 +43,8 @@
     .dual-countdown{display:flex;gap:20px;justify-content:center;margin-top:20px;flex-wrap:wrap}
     .cd-card{background:#fff;border:1px solid #ddd;border-radius:6px;padding:10px 16px;
       box-shadow:0 2px 5px rgba(0,0,0,.05);min-width:120px;text-align:center}
-    .cd-card strong{display:block;margin-bottom:4px}.cd-time{color:#e55353;font-weight:bold;font-size:14px}
+    .cd-card strong{display:block;margin-bottom:4px}
+    .cd-time{color:#e55353;font-weight:bold;font-size:14px}
   </style>
 </head>
 <body>
@@ -54,7 +55,8 @@
   <button id="refreshBtn">🔄 刷新数据</button>
   <button id="historyBtn">🗂️ 历史总览</button>
   <select id="tokenSelect">
-    <option value="BULLA" selected>BULLA</option>
+    <option value="CARV" selected>CARV</option>
+    <option value="BULLA">BULLA</option>
     <option value="BRIC">BRIC</option>
     <option value="SPK">SPK</option><option value="VELO">VELO</option><option value="F">F</option>
     <option value="ROAM">ROAM</option><option value="PUNDIA">PUNDIA</option>
@@ -131,6 +133,8 @@
 <script>
 /****************  代币配置  ****************/
 const TOKENS = {
+  CARV:{name:"CARV",contract:"0xc08cd26474722ce93f4d0c34d16201461c10aa8c",
+       totalSupply:12870000,perUserAmount:250,claimedUsers:2550},
   BULLA:{name:"BULLA",contract:"0x595e21b20e78674f8a64c1566a20b2b316bc3511",
         totalSupply:29925000,perUserAmount:750,claimedUsers:25955},
   BRIC:{name:"BRIC",contract:"0xb40f2e5291c3db45abb0ca8df76f1c21e9f112a9",
@@ -196,11 +200,12 @@ const TOKENS = {
   MAT:{name:"MAT",contract:"0xfe2dd2d57a05f89438f3aec94eafa4070396bab0",
        totalSupply:1120000,perUserAmount:16,claimedUsers:28109},
   AVAIL:{name:"AVAIL",contract:"0x39702843a6733932ec7ce0dde404e5a6dbd8c989",
-       totalSupply:159753300,perUserAmount:2667,claimedUsers:49029} // 固定领取人数
+       totalSupply:159753300,perUserAmount:2667,claimedUsers:49029}
 };
 
 /****************  截止时间  ****************/
 const endTimes = {
+  CARV:"2025-06-24T15:00:00+08:00",
   BULLA:"2025-06-23T18:00:00+08:00",
   BRIC:"2025-06-22T18:00:00+08:00",
   SPK:"2025-06-18T16:00:00+08:00",VELO:"2025-06-17T15:00:00+08:00",
@@ -312,7 +317,7 @@ async function refreshData() {
 
   for (const sym of list) {
     const t = TOKENS[sym];
-    const users = t.claimedUsers; // AVAIL/BULLA 固定，不再拉接口
+    const users = t.claimedUsers;
     const price = await getTokenPrice(sym);
     const claimed = users * t.perUserAmount;
     const uncl = t.totalSupply - claimed;
