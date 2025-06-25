@@ -55,7 +55,9 @@
   <button id="refreshBtn">🔄 刷新数据</button>
   <button id="historyBtn">🗂️ 历史总览</button>
   <select id="tokenSelect">
-    <option value="CARV" selected>CARV</option>
+    <!-- NEWT 放首位并默认选中 -->
+    <option value="NEWT" selected>NEWT</option>
+    <option value="CARV">CARV</option>
     <option value="BULLA">BULLA</option>
     <option value="BRIC">BRIC</option>
     <option value="SPK">SPK</option><option value="VELO">VELO</option><option value="F">F</option>
@@ -70,6 +72,7 @@
     <option value="RESOLV">RESOLV</option><option value="HOME">HOME</option>
     <option value="FLY">FLY</option><option value="SERAPH">SERAPH</option><option value="DEGEN">DEGEN</option>
     <option value="ULTI">ULTI</option><option value="MAT">MAT</option><option value="AVAIL">AVAIL</option>
+    <option value="MGO">MGO</option>
   </select>
 </div>
 
@@ -133,6 +136,13 @@
 <script>
 /****************  代币配置  ****************/
 const TOKENS = {
+  /* 新增 NEWT & MGO */
+  NEWT:{name:"NEWT",contract:"0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db",
+       totalSupply:5838750,perUserAmount:125,claimedUsers:27619},
+  MGO:{name:"MGO",contract:"0x73D8bD54F7Cf5FAb43fE4Ef40A62D390644946Db",
+       totalSupply:35000000,perUserAmount:1666,claimedUsers:16216},
+
+  /*  ↓ 原有配置 ↓ */
   CARV:{name:"CARV",contract:"0xc08cd26474722ce93f4d0c34d16201461c10aa8c",
        totalSupply:12870000,perUserAmount:250,claimedUsers:32096},
   BULLA:{name:"BULLA",contract:"0x595e21b20e78674f8a64c1566a20b2b316bc3511",
@@ -205,6 +215,11 @@ const TOKENS = {
 
 /****************  截止时间  ****************/
 const endTimes = {
+  /* 新增 */
+  NEWT:"2025-06-25T21:00:00+08:00",
+  MGO:"2025-06-25T16:59:00+08:00",
+
+  /* ↓ 原有 ↓ */
   CARV:"2025-06-24T15:00:00+08:00",
   BULLA:"2025-06-23T18:00:00+08:00",
   BRIC:"2025-06-22T18:00:00+08:00",
