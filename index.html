@@ -6,7 +6,7 @@
   <title>币安 Alpha 空投实时查询</title>
   <link rel="icon" href="favicon.ico" />
   <style>
-    /* =====  基础样式  ===== */
+    /* ===== 基础样式 ===== */
     body{
       font-family:"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
       background:#f9f9f9;color:#333;max-width:900px;margin:40px auto;padding:20px}
@@ -14,7 +14,8 @@
     .control,.link-buttons{text-align:center;margin-bottom:20px}
     button{padding:8px 16px;font-size:15px;background:#0078d4;color:#fff;border:none;
       border-radius:6px;cursor:pointer;transition:background-color .2s}
-    button:hover{background:#005fa3}button:disabled{opacity:.6;cursor:not-allowed}
+    button:hover{background:#005fa3}
+    button:disabled{opacity:.6;cursor:not-allowed}
     select{padding:6px 10px;font-size:15px;margin-left:10px}
     .link-buttons a{display:inline-block;margin:6px;padding:8px 16px;border-radius:6px;
       border:1px solid #0078d4;background:#fff;color:#0078d4;text-decoration:none;font-size:14px}
@@ -32,13 +33,10 @@
     th.sort-desc::after{content:"▼";margin-left:4px;font-size:11px;color:#0078d4}
     #lastUpdate,#author{text-align:center;margin-top:16px;color:#777;font-size:14px}
     #progressBlock,#surplusBlock,#merlDeadline{text-align:center;margin-top:20px}
-    #progressBarContainer{width:80%;margin:0 auto;background:#eee;border-radius:6px;
-      overflow:hidden;height:16px}
-    #progressBar{height:100%;width:0;background:linear-gradient(to right,#0078d4,#00c6ff);
-      transition:width .5s}
+    #progressBarContainer{width:80%;margin:0 auto;background:#eee;border-radius:6px;overflow:hidden;height:16px}
+    #progressBar{height:100%;width:0;background:linear-gradient(to right,#0078d4,#00c6ff);transition:width .5s}
     .discount-note{font-size:13px;color:#888}
-    #countdownBar{width:80%;height:8px;background:#ffe4e4;border-radius:6px;overflow:hidden;
-      margin:6px auto 0;display:none}
+    #countdownBar{width:80%;height:8px;background:#ffe4e4;border-radius:6px;overflow:hidden;margin:6px auto 0;display:none}
     #countdownBarInner{height:100%;width:100%;background:#e55353;transition:width 1s}
     .dual-countdown{display:flex;gap:20px;justify-content:center;margin-top:20px;flex-wrap:wrap}
     .cd-card{background:#fff;border:1px solid #ddd;border-radius:6px;padding:10px 16px;
@@ -55,24 +53,44 @@
   <button id="refreshBtn">🔄 刷新数据</button>
   <button id="historyBtn">🗂️ 历史总览</button>
   <select id="tokenSelect">
-    <!-- H 放首位并默认选中 -->
-    <option value="H" selected>H</option>
+    <option value="SAHARA" selected>SAHARA</option>
+    <option value="H">H</option>
     <option value="NEWT">NEWT</option>
     <option value="CARV">CARV</option>
     <option value="BULLA">BULLA</option>
     <option value="BRIC">BRIC</option>
-    <option value="SPK">SPK</option><option value="VELO">VELO</option><option value="F">F</option>
-    <option value="ROAM">ROAM</option><option value="PUNDIA">PUNDIA</option>
+    <option value="SPK">SPK</option>
+    <option value="VELO">VELO</option>
+    <option value="F">F</option>
+    <option value="ROAM">ROAM</option>
+    <option value="PUNDIA">PUNDIA</option>
     <option value="TODAY">今日双空投 (RESOLV + HOME)</option>
-    <option value="SKATE">SKATE</option><option value="LA">LA</option><option value="ASRR">ASRR</option>
-    <option value="SOPH">SOPH</option><option value="OBT">OBT</option><option value="MERL">MERL</option>
-    <option value="XTER">XTER</option><option value="TGT">TGT</option><option value="Soon">Soon</option>
-    <option value="HUMA">HUMA</option><option value="PFVS">PFVS</option><option value="TAIKO">TAIKO</option>
-    <option value="EDGEN">EDGEN</option><option value="SQD">SQD</option><option value="ZRC">ZRC</option>
-    <option value="BDXN">BDXN</option><option value="AB">AB</option><option value="OL">OL</option>
-    <option value="RESOLV">RESOLV</option><option value="HOME">HOME</option>
-    <option value="FLY">FLY</option><option value="SERAPH">SERAPH</option><option value="DEGEN">DEGEN</option>
-    <option value="ULTI">ULTI</option><option value="MAT">MAT</option><option value="AVAIL">AVAIL</option>
+    <option value="SKATE">SKATE</option>
+    <option value="LA">LA</option>
+    <option value="ASRR">ASRR</option>
+    <option value="SOPH">SOPH</option>
+    <option value="OBT">OBT</option>
+    <option value="MERL">MERL</option>
+    <option value="XTER">XTER</option>
+    <option value="TGT">TGT</option>
+    <option value="Soon">Soon</option>
+    <option value="HUMA">HUMA</option>
+    <option value="PFVS">PFVS</option>
+    <option value="TAIKO">TAIKO</option>
+    <option value="EDGEN">EDGEN</option>
+    <option value="SQD">SQD</option>
+    <option value="ZRC">ZRC</option>
+    <option value="BDXN">BDXN</option>
+    <option value="AB">AB</option>
+    <option value="OL">OL</option>
+    <option value="RESOLV">RESOLV</option>
+    <option value="HOME">HOME</option>
+    <option value="FLY">FLY</option>
+    <option value="SERAPH">SERAPH</option>
+    <option value="DEGEN">DEGEN</option>
+    <option value="ULTI">ULTI</option>
+    <option value="MAT">MAT</option>
+    <option value="AVAIL">AVAIL</option>
     <option value="MGO">MGO</option>
   </select>
 </div>
@@ -135,19 +153,16 @@
 <div id="author">👤 <a href="https://x.com/0xXIAOc" target="_blank" style="color:#0078d4;">@0xXIAOc</a></div>
 
 <script>
-/****************  代币配置  ****************/
+/**************** 代币配置 ****************/
 const TOKENS = {
-  /* 新增 H  */
+  SAHARA:{name:"SAHARA",contract:"0xfdffb411c4a70aa7c95d5c981a6fb4da867e1111",
+          totalSupply:74950000,perUserAmount:1000,claimedUsers:0},
   H:{name:"H",contract:"0x44f161ae29361e332dea039dfa2f404e0bc5b5cc",
-     totalSupply:120000000,perUserAmount:1600,claimedUsers:0},   // 领取人数稍后实时拉取
-
-  /* 新增 NEWT & MGO（保留） */
+     totalSupply:120000000,perUserAmount:1600,claimedUsers:59819},
   NEWT:{name:"NEWT",contract:"0xb8a677e6d805c8d743e6f14c8bc9c19305b5defc",
        totalSupply:5838750,perUserAmount:125,claimedUsers:45071},
   MGO:{name:"MGO",contract:"0x5e0d6791edbeeba6a14d1d38e2b8233257118eb1",
        totalSupply:35000000,perUserAmount:1666,claimedUsers:16880},
-
-  /*  ↓ 下面为原有配置（保持不变） ↓ */
   CARV:{name:"CARV",contract:"0xc08cd26474722ce93f4d0c34d16201461c10aa8c",
        totalSupply:12870000,perUserAmount:250,claimedUsers:32096},
   BULLA:{name:"BULLA",contract:"0x595e21b20e78674f8a64c1566a20b2b316bc3511",
@@ -218,37 +233,48 @@ const TOKENS = {
        totalSupply:159753300,perUserAmount:2667,claimedUsers:49029}
 };
 
-/****************  截止时间  ****************/
+/**************** 截止时间 ****************/
 const endTimes = {
-  /* 新增 H */
+  SAHARA:"2025-06-27T18:00:00+08:00",
   H:"2025-06-26T17:00:00+08:00",
-
-  /* 新增 NEWT & MGO */
   NEWT:"2025-06-25T21:00:00+08:00",
   MGO:"2025-06-25T16:59:00+08:00",
-
-  /* ↓ 原有 ↓ */
   CARV:"2025-06-24T15:00:00+08:00",
   BULLA:"2025-06-23T18:00:00+08:00",
   BRIC:"2025-06-22T18:00:00+08:00",
-  SPK:"2025-06-18T16:00:00+08:00",VELO:"2025-06-17T15:00:00+08:00",
-  F:"2025-06-16T16:00:00+08:00",PUNDIA:"2025-06-13T14:00:00+08:00",
-  RESOLV:"2025-06-11T21:00:00+08:00",HOME:"2025-06-11T19:00:00+08:00",
-  LA:"2025-06-05T20:00:00+08:00",ASRR:"2025-05-31T21:00:00+08:00",
-  SOPH:"2025-05-29T20:05:00+08:00",MERL:"2025-05-21T17:00:00+08:00",
-  TGT:"2025-05-22T18:00:00+08:00",Soon:"2025-05-24T16:00:00+08:00",
-  OBT:"2025-05-25T16:00:00+08:00",HUMA:"2025-05-27T19:00:00+08:00",
-  PFVS:"2025-05-28T20:00:00+08:00",TAIKO:"2025-06-01T14:00:00+08:00",
-  EDGEN:"2025-06-03T18:30:00+08:00",SQD:"2025-06-03T21:00:00+08:00",
-  ZRC:"2025-06-04T16:30:00+08:00",BDXN:"2025-06-04T18:00:00+08:00",
-  AB:"2025-06-08T14:00:00+08:00",OL:"2025-06-09T14:00:00+08:00",
-  SKATE:"2025-06-10T18:00:00+08:00",ROAM:"2025-06-14T21:00:00+08:00",
-  FLY:"2025-06-07T21:00:00+08:00",SERAPH:"2025-06-10T20:00:00+08:00",
-  DEGEN:"2025-06-15T15:00:00+08:00",ULTI:"2025-06-17T18:00:00+08:00",
-  MAT:"2025-06-20T20:00:00+08:00",AVAIL:"2025-06-21T15:00:00+08:00"
+  SPK:"2025-06-18T16:00:00+08:00",
+  VELO:"2025-06-17T15:00:00+08:00",
+  F:"2025-06-16T16:00:00+08:00",
+  PUNDIA:"2025-06-13T14:00:00+08:00",
+  RESOLV:"2025-06-11T21:00:00+08:00",
+  HOME:"2025-06-11T19:00:00+08:00",
+  LA:"2025-06-05T20:00:00+08:00",
+  ASRR:"2025-05-31T21:00:00+08:00",
+  SOPH:"2025-05-29T20:05:00+08:00",
+  MERL:"2025-05-21T17:00:00+08:00",
+  TGT:"2025-05-22T18:00:00+08:00",
+  Soon:"2025-05-24T16:00:00+08:00",
+  OBT:"2025-05-25T16:00:00+08:00",
+  HUMA:"2025-05-27T19:00:00+08:00",
+  PFVS:"2025-05-28T20:00:00+08:00",
+  TAIKO:"2025-06-01T14:00:00+08:00",
+  EDGEN:"2025-06-03T18:30:00+08:00",
+  SQD:"2025-06-03T21:00:00+08:00",
+  ZRC:"2025-06-04T16:30:00+08:00",
+  BDXN:"2025-06-04T18:00:00+08:00",
+  AB:"2025-06-08T14:00:00+08:00",
+  OL:"2025-06-09T14:00:00+08:00",
+  SKATE:"2025-06-10T18:00:00+08:00",
+  ROAM:"2025-06-14T21:00:00+08:00",
+  FLY:"2025-06-07T21:00:00+08:00",
+  SERAPH:"2025-06-10T20:00:00+08:00",
+  DEGEN:"2025-06-15T15:00:00+08:00",
+  ULTI:"2025-06-17T18:00:00+08:00",
+  MAT:"2025-06-20T20:00:00+08:00",
+  AVAIL:"2025-06-21T15:00:00+08:00"
 };
 
-/****************  常量 & 工具  ****************/
+/**************** 常量 & 工具 ****************/
 const DISCOUNT = 0.85;
 const PRICE_CACHE_TTL = 5 * 60 * 1e3;
 const usd = n => `${Math.floor(n).toLocaleString()} USD`;
@@ -325,7 +351,7 @@ function twoCountdown(list) {
   }, 1000);
 }
 
-/****************  主刷新流程  ****************/
+/**************** 主刷新流程 ****************/
 async function refreshData() {
   const btn = document.getElementById("refreshBtn");
   btn.disabled = true; btn.textContent = "⏳ 加载...";
@@ -343,15 +369,14 @@ async function refreshData() {
 
   for (const sym of list) {
     const t = TOKENS[sym];
-    /* —— 若是 H，实时获取领取人数 —— */
+    /* SAHARA / H 领取人数处理 */
     let users = t.claimedUsers;
-    if (sym === "H") {
+    if (sym === "SAHARA") {
       try {
         const r = await fetchWithTimeout("https://lingquss.vercel.app/api/proxy", 8000);
         const j = await r.json();
-        // 接口若返回 { sold_count_1: 12345 } 或 { count: 12345 }
         users = j?.sold_count_1 ?? j?.count ?? users;
-      } catch (e) { console.warn("H users fetch error", e); }
+      } catch (e) { console.warn("SAHARA users fetch error", e); }
     }
 
     const price = await getTokenPrice(sym);
