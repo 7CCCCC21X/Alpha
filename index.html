@@ -53,7 +53,9 @@
   <button id="refreshBtn">🔄 刷新数据</button>
   <button id="historyBtn">🗂️ 历史总览</button>
   <select id="tokenSelect">
-    <option value="SAHARA" selected>SAHARA</option>
+    <option value="MORE" selected>MORE</option>
+    <option value="CESS">CESS</option>
+    <option value="SAHARA">SAHARA</option>
     <option value="H">H</option>
     <option value="NEWT">NEWT</option>
     <option value="CARV">CARV</option>
@@ -156,7 +158,7 @@
 /**************** 代币配置 ****************/
 const TOKENS = {
   SAHARA:{name:"SAHARA",contract:"0xfdffb411c4a70aa7c95d5c981a6fb4da867e1111",
-          totalSupply:74950000,perUserAmount:1000,claimedUsers:0},
+          totalSupply:74950000,perUserAmount:1000,claimedUsers:60595},
   H:{name:"H",contract:"0x44f161ae29361e332dea039dfa2f404e0bc5b5cc",
      totalSupply:120000000,perUserAmount:1600,claimedUsers:59819},
   NEWT:{name:"NEWT",contract:"0xb8a677e6d805c8d743e6f14c8bc9c19305b5defc",
@@ -230,7 +232,11 @@ const TOKENS = {
   MAT:{name:"MAT",contract:"0xfe2dd2d57a05f89438f3aec94eafa4070396bab0",
        totalSupply:1120000,perUserAmount:16,claimedUsers:28109},
   AVAIL:{name:"AVAIL",contract:"0x39702843a6733932ec7ce0dde404e5a6dbd8c989",
-       totalSupply:159753300,perUserAmount:2667,claimedUsers:49029}
+       totalSupply:159753300,perUserAmount:2667,claimedUsers:49029},
+  CESS:{name:"CESS",contract:"0x0c78d4605c2972e5f989de9019de1fb00c5d3462",
+       totalSupply:200000000,perUserAmount:10000,claimedUsers:15925},
+  MORE:{name:"MORE",contract:"0xfe723495f73714426493384eb5e49aa5b827e1d5",
+       totalSupply:10000000,perUserAmount:400,claimedUsers:0}
 };
 
 /**************** 截止时间 ****************/
@@ -271,7 +277,9 @@ const endTimes = {
   DEGEN:"2025-06-15T15:00:00+08:00",
   ULTI:"2025-06-17T18:00:00+08:00",
   MAT:"2025-06-20T20:00:00+08:00",
-  AVAIL:"2025-06-21T15:00:00+08:00"
+  AVAIL:"2025-06-21T15:00:00+08:00",
+  CESS:"2025-06-28T18:00:00+08:00",
+  MORE:"2025-06-28T20:00:00+08:00"
 };
 
 /**************** 常量 & 工具 ****************/
@@ -369,14 +377,14 @@ async function refreshData() {
 
   for (const sym of list) {
     const t = TOKENS[sym];
-    /* SAHARA / H 领取人数处理 */
     let users = t.claimedUsers;
-    if (sym === "SAHARA") {
+
+    if (sym === "MORE") {                       // 动态接口
       try {
         const r = await fetchWithTimeout("https://lingquss.vercel.app/api/proxy", 8000);
         const j = await r.json();
         users = j?.sold_count_1 ?? j?.count ?? users;
-      } catch (e) { console.warn("SAHARA users fetch error", e); }
+      } catch (e) { console.warn("MORE users fetch error", e); }
     }
 
     const price = await getTokenPrice(sym);
