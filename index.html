@@ -53,7 +53,10 @@
   <button id="refreshBtn">🔄 刷新数据</button>
   <button id="historyBtn">🗂️ 历史总览</button>
   <select id="tokenSelect">
-    <option value="MORE" selected>MORE</option>
+    <option value="BGSC" selected>BGSC</option>
+    <option value="REKT">REKT</option>
+    <option value="FUEL">FUEL</option>
+    <option value="MORE">MORE</option>
     <option value="CESS">CESS</option>
     <option value="SAHARA">SAHARA</option>
     <option value="H">H</option>
@@ -157,6 +160,15 @@
 <script>
 /**************** 代币配置 ****************/
 const TOKENS = {
+  /* ---- 新增代币 ---- */
+  REKT:{name:"REKT",contract:"0x20482b0b4d9d8f60d3ab432b92f4c4b901a0d10c",
+        totalSupply:4206900000000,perUserAmount:140230000,claimedUsers:26137},
+  FUEL:{name:"FUEL",contract:"0x5c8daeabc57e9249606d3bd6d1e097ef492ea3c5",
+        totalSupply:100943400,perUserAmount:5550,claimedUsers:15841},
+  BGSC:{name:"BGSC",contract:"0xa4b68d48d7bc6f04420e8077e6f74bdef809dea3",
+        totalSupply:588800000,perUserAmount:7360,claimedUsers:0},  // 动态接口
+
+  /* ---- 以下为原有代币（略） ---- */
   SAHARA:{name:"SAHARA",contract:"0xfdffb411c4a70aa7c95d5c981a6fb4da867e1111",
           totalSupply:74950000,perUserAmount:1000,claimedUsers:60595},
   H:{name:"H",contract:"0x44f161ae29361e332dea039dfa2f404e0bc5b5cc",
@@ -236,11 +248,16 @@ const TOKENS = {
   CESS:{name:"CESS",contract:"0x0c78d4605c2972e5f989de9019de1fb00c5d3462",
        totalSupply:200000000,perUserAmount:10000,claimedUsers:15925},
   MORE:{name:"MORE",contract:"0xfe723495f73714426493384eb5e49aa5b827e1d5",
-       totalSupply:10000000,perUserAmount:400,claimedUsers:0}
+       totalSupply:10000000,perUserAmount:400,claimedUsers:17178}  // 领取数固定
 };
 
 /**************** 截止时间 ****************/
 const endTimes = {
+  REKT:"2025-06-29T21:00:00+08:00",
+  FUEL:"2025-06-30T21:00:00+08:00",
+  BGSC:"2025-07-02T16:30:00+08:00",
+
+  /* 原有截止时间（略） */
   SAHARA:"2025-06-27T18:00:00+08:00",
   H:"2025-06-26T17:00:00+08:00",
   NEWT:"2025-06-25T21:00:00+08:00",
@@ -331,8 +348,8 @@ async function getTokenPrice(sym) {
 }
 
 const fmtMS = ms =>
-  ms <= 0 ? "已结束" :
-    `${Math.floor(ms / 3600000)}小时 ${Math.floor(ms % 3600000 / 60000)}分 ${Math.floor(ms % 60000 / 1000)}秒`;
+  ms <= 0 ? "已结束"
+          : `${Math.floor(ms / 3600000)}小时 ${Math.floor(ms % 3600000 / 60000)}分 ${Math.floor(ms % 60000 / 1000)}秒`;
 
 let cdTimer = null, dualTimer = null;
 function oneCountdown(end) {
@@ -379,12 +396,13 @@ async function refreshData() {
     const t = TOKENS[sym];
     let users = t.claimedUsers;
 
-    if (sym === "MORE") {                       // 动态接口
+    /* 动态领取人数：BGSC */
+    if (sym === "BGSC") {
       try {
         const r = await fetchWithTimeout("https://lingquss.vercel.app/api/proxy", 8000);
         const j = await r.json();
         users = j?.sold_count_1 ?? j?.count ?? users;
-      } catch (e) { console.warn("MORE users fetch error", e); }
+      } catch (e) { console.warn("BGSC users fetch error", e); }
     }
 
     const price = await getTokenPrice(sym);
